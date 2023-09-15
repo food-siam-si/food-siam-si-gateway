@@ -5,12 +5,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-type FiberConfig struct {
-	Port string `mapstructure:"PORT"`
+type AppConfig struct {
+	Port                 string `mapstructure:"PORT"`
+	RestaurantServiceUrl string `mapstructure:"RESTAURANT_SERVICE_URL"`
 }
 
-func LoadEnv() (*FiberConfig, error) {
-	config := &FiberConfig{}
+func LoadEnv() (*AppConfig, error) {
+	config := &AppConfig{}
 
 	viper.SetConfigFile("./.env")
 

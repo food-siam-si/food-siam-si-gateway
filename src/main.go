@@ -19,6 +19,10 @@ func main() {
 
 	app := router.NewFiberRouter()
 
+	if err := app.Listen(fmt.Sprintf(":%v", config.Port)); err != nil {
+		fmt.Println(err.Error())
+	}
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
@@ -30,7 +34,4 @@ func main() {
 		os.Exit(0)
 	}()
 
-	if err := app.Listen(fmt.Sprintf(":%v", config.Port)); err != nil {
-		fmt.Println(err.Error())
-	}
 }
