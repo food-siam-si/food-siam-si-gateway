@@ -1,29 +1,26 @@
 package config
 
 import (
-	"github.com/pkg/errors"
-	"github.com/spf13/viper"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type AppConfig struct {
-	Port                 string `mapstructure:"PORT"`
-	RestaurantServiceUrl string `mapstructure:"RESTAURANT_SERVICE_URL"`
+	Port                 string
+	RestaurantServiceUrl string
+	HelloServiceUrl      string
 }
 
-func LoadEnv() (*AppConfig, error) {
+func LoadEnv() *AppConfig {
 	config := &AppConfig{}
 
-	viper.SetConfigFile("./.env")
+	// Load .env file
+	godotenv.Load(".env")
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, errors.Wrap(err, "error occurs while reading the config")
-	}
+	config.Port = os.Getenv("PORT")
+	config.RestaurantServiceUrl = os.Getenv("RESTAURNAT_SERVICE_URL")
+	config.HelloServiceUrl = os.Getenv("HELLO_SERVICE_URL")
 
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		return nil, errors.Wrap(err, "error occurs while unmarshal the config")
-	}
-
-	return config, nil
+	return config
 }

@@ -7,6 +7,7 @@ import (
 
 type FiberRouter struct {
 	*fiber.App
+	Hello      fiber.Router
 	User       fiber.Router
 	Restaurant fiber.Router
 }
@@ -18,8 +19,9 @@ func NewFiberRouter() *FiberRouter {
 
 	r.Use(cors.New(cors.ConfigDefault))
 
-	user := r.Group("/auth")
+	hello := r.Group("/hello")
+	user := r.Group("/user")
 	restaurant := r.Group("/restaurant")
 
-	return &FiberRouter{r, user, restaurant}
+	return &FiberRouter{r, hello, user, restaurant}
 }
