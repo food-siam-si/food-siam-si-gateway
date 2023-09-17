@@ -25,9 +25,9 @@ func (h *Handler) HelloWorld(ctx *fiber.Ctx) error {
 	res, err := h.service.HelloWorld(text)
 
 	if err != nil {
-		ctx.Status(fiber.StatusInternalServerError)
+		ctx.Status(err.Code)
 		ctx.JSON(fiber.Map{
-			"message": err.Error(),
+			"message": err.Message,
 		})
 		return nil
 	}

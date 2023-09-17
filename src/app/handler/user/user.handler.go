@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/food-siam-si/food-siam-si-gateway/src/services/user"
+	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/gofiber/fiber/v2"
 )
 

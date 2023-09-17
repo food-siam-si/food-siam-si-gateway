@@ -1,7 +1,7 @@
 package restaurant
 
 import (
-	"github.com/food-siam-si/food-siam-si-gateway/src/services/restaurant"
+	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
 	"github.com/gofiber/fiber/v2"
 )
 
