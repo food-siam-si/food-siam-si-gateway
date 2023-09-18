@@ -26,7 +26,7 @@ func main() {
 
 	proto.RegisterHelloServiceServer(app, &srv)
 
-	lis, err := net.Listen("tcp", "localhost:7777")
+	lis, err := net.Listen("tcp", ":7777")
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

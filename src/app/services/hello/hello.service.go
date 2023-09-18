@@ -2,6 +2,7 @@ package hello
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
@@ -46,7 +47,7 @@ func (s *Service) HelloWorld(text string) (*proto.HelloWorldResponse, *dto.DTOEr
 			default:
 				return nil, &dto.DTOErrorWithCode{
 					Code:    fiber.StatusInternalServerError,
-					Message: "Internal server error",
+					Message: fmt.Sprintf("Internal server error: %v", st.Message()),
 				}
 			}
 		}
