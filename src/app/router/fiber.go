@@ -16,6 +16,22 @@ type FiberRouter struct {
 func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
 	r := fiber.New(fiber.Config{
 		BodyLimit: 16 * 1024 * 1024,
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+			message := "Internal Server Error"
+
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+				message = e.Message
+			}
+
+			ctx.Status(code)
+			ctx.JSON(fiber.Map{
+				"message": message,
+			})
+
+			return nil
+		},
 	})
 
 	r.Use(cors.New(cors.ConfigDefault))

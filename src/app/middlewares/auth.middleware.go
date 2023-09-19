@@ -45,9 +45,8 @@ func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
 	ctx.Set("userId", token)
 	ctx.Set("role", "user")
 	ctx.Set("username", "test")
-	ctx.Next()
 
-	return nil
+	return ctx.Next()
 }
 
 func (m *AuthMiddleware) RestaurantGuard(ctx *fiber.Ctx) error {
@@ -61,6 +60,5 @@ func (m *AuthMiddleware) RestaurantGuard(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	ctx.Next()
-	return nil
+	return ctx.Next()
 }
