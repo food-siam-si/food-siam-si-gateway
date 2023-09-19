@@ -9,6 +9,7 @@ import (
 	helloHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/hello"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
+	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
 	helloSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/hello"
 	restaurantSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
 	userSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
@@ -25,8 +26,6 @@ func main() {
 	config := config.LoadEnv()
 	v := validator.NewValidator()
 
-	app := router.NewFiberRouter()
-
 	helloConn, err := grpc.Dial(config.HelloServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
@@ -40,23 +39,30 @@ func main() {
 	helloService := helloSrv.NewService(helloPbClient)
 	helloHandler := helloHdr.NewHandler(helloService, v)
 
-	app.Hello.Get("/", helloHandler.HelloWorld)
-
 	// User service
 	userService := userSrv.NewService()
 	userHandler := userHdr.NewHandler(userService, v)
-
-	app.User.Get("/me", userHandler.GetCurrentUser)
-	app.User.Post("/login", userHandler.Signin)
-	app.User.Delete("/logout", userHandler.SignOut)
-	app.User.Post("/register", userHandler.CreateUser)
 
 	// Restaurant service
 	restaurantService := restaurantSrv.NewService()
 	restaurantHdr := restaurantHdr.NewHandler(restaurantService, v)
 
+	authMiddleware := middlewares.NewAuthMiddleware(userService)
+
+	app := router.NewFiberRouter(authMiddleware)
+
+	// Route Hello Initialize
+	app.Hello.Get("/", helloHandler.HelloWorld)
+
+	// Route User Initialize
+	app.User.Get("/me", authMiddleware.AuthGuard, userHandler.GetCurrentUser)
+	app.User.Post("/login", userHandler.Signin)
+	app.User.Delete("/logout", userHandler.SignOut)
+	app.User.Post("/register", userHandler.CreateUser)
+
+	// Route Restaurant Initialize
 	app.Restaurant.Post("/", restaurantHdr.CreateRestaurant)
-	app.Restaurant.Put("/:id", restaurantHdr.UpdateRestaurantInfo)
+	app.Restaurant.Put("/:id", authMiddleware.RestaurantGuard, restaurantHdr.UpdateRestaurantInfo)
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)

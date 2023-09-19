@@ -6,7 +6,7 @@ type Service struct {
 }
 
 type IService interface {
-	GetCurrentUser(token string) error
+	GetCurrentUser(token string) *dto.DTOErrorWithCode
 	CreateUser(req *dto.CreateUserRequest) *dto.DTOErrorWithCode
 	Signin(req *dto.LoginRequest) (string, *dto.DTOErrorWithCode)
 }
@@ -15,7 +15,7 @@ func NewService() IService {
 	return &Service{}
 }
 
-func (s *Service) GetCurrentUser(token string) error {
+func (s *Service) GetCurrentUser(token string) *dto.DTOErrorWithCode {
 	return nil
 }
 

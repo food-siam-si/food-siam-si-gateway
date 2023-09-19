@@ -3,6 +3,7 @@ package restaurant
 import (
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/validator"
+	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,21 +20,41 @@ func NewHandler(service restaurant.IService, v validator.IValidator) *Handler {
 }
 
 func (h *Handler) CreateRestaurant(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	ctx.JSON(dto.DTOError{
+		Message: "Not Implemented",
+	})
 	return nil
 }
 
 func (h *Handler) ViewRestaurantById(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	ctx.JSON(dto.DTOError{
+		Message: "Not Implemented",
+	})
 	return nil
 }
 
 func (h *Handler) UpdateRestaurantInfo(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	ctx.JSON(dto.DTOError{
+		Message: "Not Implemented",
+	})
 	return nil
 }
 
 func (h *Handler) ViewRestaurantType(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	ctx.JSON(dto.DTOError{
+		Message: "Not Implemented",
+	})
 	return nil
 }
 
 func (h *Handler) RandomRestaurant(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	ctx.JSON(dto.DTOError{
+		Message: "Not Implemented",
+	})
 	return nil
 }
