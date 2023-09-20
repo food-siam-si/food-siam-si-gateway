@@ -20,6 +20,27 @@ func NewHandler(service restaurant.IService, v validator.IValidator) *Handler {
 }
 
 func (h *Handler) CreateRestaurant(ctx *fiber.Ctx) error {
+	body := dto.CreateRestaurantRequest{}
+
+	err := ctx.BodyParser(&body)
+
+	if err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid request body" + err.Error(),
+		})
+		return nil
+	}
+
+	if err := h.v.Validate(body); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOErrorArray{
+			Message: *err,
+		})
+
+		return nil
+	}
+
 	ctx.Status(fiber.StatusNotImplemented)
 	ctx.JSON(dto.DTOError{
 		Message: "Not Implemented",
@@ -28,6 +49,16 @@ func (h *Handler) CreateRestaurant(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) ViewRestaurantById(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	if id == "" {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Missing id",
+		})
+		return nil
+	}
+
 	ctx.Status(fiber.StatusNotImplemented)
 	ctx.JSON(dto.DTOError{
 		Message: "Not Implemented",
@@ -36,6 +67,37 @@ func (h *Handler) ViewRestaurantById(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) UpdateRestaurantInfo(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+
+	if id == "" {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Missing id",
+		})
+		return nil
+	}
+
+	body := dto.UpdateRestaurantRequest{}
+
+	err := ctx.BodyParser(&body)
+
+	if err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid request body",
+		})
+		return nil
+	}
+
+	if err := h.v.Validate(body); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOErrorArray{
+			Message: *err,
+		})
+
+		return nil
+	}
+
 	ctx.Status(fiber.StatusNotImplemented)
 	ctx.JSON(dto.DTOError{
 		Message: "Not Implemented",

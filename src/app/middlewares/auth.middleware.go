@@ -42,15 +42,16 @@ func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	ctx.Set("userId", token)
-	ctx.Set("role", "user")
-	ctx.Set("username", "test")
-
+	ctx.Locals("user", dto.UserToken{
+		Role:     "user",
+		UserId:   token,
+		Username: token,
+	})
 	return ctx.Next()
 }
 
 func (m *AuthMiddleware) RestaurantGuard(ctx *fiber.Ctx) error {
-	role := ctx.Get("role")
+	role := ctx.Locals("role")
 
 	if role != "restaurant" {
 		ctx.Status(fiber.StatusForbidden)

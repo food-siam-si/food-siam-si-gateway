@@ -10,6 +10,7 @@ type AppConfig struct {
 	Port                 string
 	RestaurantServiceUrl string
 	HelloServiceUrl      string
+	UserServiceUrl       string
 }
 
 func LoadEnv() *AppConfig {
@@ -21,6 +22,7 @@ func LoadEnv() *AppConfig {
 	config.Port = os.Getenv("PORT")
 	config.RestaurantServiceUrl = os.Getenv("RESTAURNAT_SERVICE_URL")
 	config.HelloServiceUrl = os.Getenv("HELLO_SERVICE_URL")
+	config.UserServiceUrl = os.Getenv("USER_SERVICE_URL")
 
 	return config
 }

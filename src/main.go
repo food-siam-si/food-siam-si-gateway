@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/food-siam-si/food-siam-si-gateway/src/app/client"
 	helloHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/hello"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
@@ -40,7 +41,9 @@ func main() {
 	helloHandler := helloHdr.NewHandler(helloService, v)
 
 	// User service
-	userService := userSrv.NewService()
+	userClient := client.NewUserClient(config)
+
+	userService := userSrv.NewService(userClient)
 	userHandler := userHdr.NewHandler(userService, v)
 
 	// Restaurant service
@@ -62,7 +65,7 @@ func main() {
 
 	// Route Restaurant Initialize
 	app.Restaurant.Post("/", restaurantHdr.CreateRestaurant)
-	app.Restaurant.Put("/:id", authMiddleware.RestaurantGuard, restaurantHdr.UpdateRestaurantInfo)
+	app.Restaurant.Put("/:id", restaurantHdr.UpdateRestaurantInfo)
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)

@@ -1,8 +1,12 @@
 package user
 
-import "github.com/food-siam-si/food-siam-si-gateway/src/dto"
+import (
+	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
+	"github.com/go-resty/resty/v2"
+)
 
 type Service struct {
+	client *resty.Client
 }
 
 type IService interface {
@@ -11,8 +15,8 @@ type IService interface {
 	Signin(req *dto.LoginRequest) (string, *dto.DTOErrorWithCode)
 }
 
-func NewService() IService {
-	return &Service{}
+func NewService(client *resty.Client) IService {
+	return &Service{client}
 }
 
 func (s *Service) GetCurrentUser(token string) *dto.DTOErrorWithCode {

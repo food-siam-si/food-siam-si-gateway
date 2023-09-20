@@ -7,10 +7,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func NewRestaurantClient(config *config.AppConfig) *resty.Client {
+func NewUserClient(config *config.AppConfig) *resty.Client {
 	client := resty.New()
 
-	client.SetBaseURL(config.RestaurantServiceUrl)
+	client.SetBaseURL(config.UserServiceUrl)
 	client.SetTimeout(30 * time.Second)
 
 	return client

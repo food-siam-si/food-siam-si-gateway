@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"regexp"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -22,10 +23,16 @@ type IValidator interface {
 func NewValidator() IValidator {
 	v := validator.New()
 
+	r, _ := regexp.Compile(`^0[0-9]{9}$`)
+
 	english := en.New()
 	uni := ut.New(english, english)
 
 	trans, _ := uni.GetTranslator("en")
+
+	v.RegisterValidation("phoneNumber", func(fl validator.FieldLevel) bool {
+		return r.MatchString(fl.Field().String())
+	})
 
 	en_translations.RegisterDefaultTranslations(v, trans)
 
