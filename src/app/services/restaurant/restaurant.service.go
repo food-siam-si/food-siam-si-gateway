@@ -20,7 +20,7 @@ type Service struct {
 
 type IService interface {
 	CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.UserToken) *dto.DTOErrorWithCode
-	ViewRestaurantById(id uint32) (*proto.Restaurant, *dto.DTOErrorWithCode)
+	ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorWithCode)
 	UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode
 	ViewRestaurantType() (*proto.GetRestaurantTypeResponse, *dto.DTOErrorWithCode)
 	RandomRestaurant() *dto.DTOErrorWithCode
@@ -43,7 +43,7 @@ func (s *Service) CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.
 		LocationLat:       body.LocationLat,
 		LocationLong:      body.LocationLong,
 		PhoneNumber:       body.PhoneNumber,
-		AveragePrice:      body.AveragePrice,
+		AveragePrice:      proto.AveragePrice(proto.AveragePrice_value[string(body.AveragePrice)]),
 		ImageUrl:          body.ImageUrl,
 		RestaurantTypeIds: body.RestaurantTypeIds,
 		User: &proto.User{
@@ -80,7 +80,7 @@ func (s *Service) CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.
 	return nil
 }
 
-func (s *Service) ViewRestaurantById(id uint32) (*proto.Restaurant, *dto.DTOErrorWithCode) {
+func (s *Service) ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorWithCode) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -112,7 +112,25 @@ func (s *Service) ViewRestaurantById(id uint32) (*proto.Restaurant, *dto.DTOErro
 		}
 	}
 
-	return res, nil
+	restaurantType := make([]dto.RestaurantType, 0)
+
+	for _, v := range res.RestaurantType {
+		restaurantType = append(restaurantType, dto.RestaurantType{
+			Id:   v.Id,
+			Name: v.Name,
+		})
+	}
+
+	return &dto.Restaurant{
+		Name:           res.Name,
+		Description:    res.Description,
+		PhoneNumber:    res.PhoneNumber,
+		LocationLat:    res.LocationLat,
+		LocationLong:   res.LocationLong,
+		AveragePrice:   dto.AveragePrice(proto.AveragePrice_name[int32(res.AveragePrice)]),
+		ImageUrl:       res.ImageUrl,
+		RestaurantType: restaurantType,
+	}, nil
 }
 
 func (s *Service) UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode {
@@ -126,7 +144,7 @@ func (s *Service) UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto
 		LocationLat:       body.LocationLat,
 		LocationLong:      body.LocationLong,
 		PhoneNumber:       body.PhoneNumber,
-		AveragePrice:      body.AveragePrice,
+		AveragePrice:      proto.AveragePrice(proto.AveragePrice_value[string(body.AveragePrice)]),
 		ImageUrl:          body.ImageUrl,
 		IsInService:       body.IsInService,
 		RestaurantTypeIds: body.RestaurantTypeIds,
