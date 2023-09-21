@@ -4,6 +4,7 @@ import (
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 type FiberRouter struct {
@@ -34,6 +35,7 @@ func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
 		},
 	})
 
+	r.Use(recover.New())
 	r.Use(cors.New(cors.ConfigDefault))
 
 	hello := r.Group("/hello")
