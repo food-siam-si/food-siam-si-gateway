@@ -1,7 +1,5 @@
 package dto
 
-import "github.com/food-siam-si/food-siam-si-gateway/src/proto"
-
 type UserType string
 
 const (
@@ -10,9 +8,21 @@ const (
 )
 
 type UserToken struct {
-	Id   uint32         `json:"id"`
-	Type proto.UserType `json:"type"`
-	Name string         `json:"username"`
+	Id   uint32   `json:"id"`
+	Type UserType `json:"type"`
+	Name string   `json:"username"`
+}
+
+type RestUserData struct {
+	Id       uint32   `json:"userId"`
+	Username string   `json:"username"`
+	Email    string   `json:"email"`
+	UserType UserType `json:"userType"`
+}
+
+type FetchUserResponse struct {
+	Data    RestUserData `json:"data"`
+	Message string       `json:"message"`
 }
 
 type CreateUserRequest struct {

@@ -49,7 +49,7 @@ func (s *Service) CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.
 		User: &proto.User{
 			Id:   user.Id,
 			Name: user.Name,
-			Type: user.Type,
+			Type: proto.UserType(proto.UserType_value[string(user.Type)]),
 		},
 	})
 
@@ -133,7 +133,7 @@ func (s *Service) UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto
 		User: &proto.User{
 			Id:   user.Id,
 			Name: user.Name,
-			Type: user.Type,
+			Type: proto.UserType(proto.UserType_value[string(user.Type)]),
 		},
 	}
 

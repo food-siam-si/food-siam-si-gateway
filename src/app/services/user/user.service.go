@@ -13,7 +13,7 @@ type Service struct {
 }
 
 type IService interface {
-	GetCurrentUser(token string) *dto.DTOErrorWithCode
+	GetCurrentUser(token string) (*dto.FetchUserResponse, *dto.DTOErrorWithCode)
 	CreateUser(req *dto.CreateUserRequest) *dto.DTOErrorWithCode
 	Signin(req *dto.LoginRequest) (*dto.LoginResponse, *dto.DTOErrorWithCode)
 }
@@ -22,24 +22,27 @@ func NewService(client *resty.Client) IService {
 	return &Service{client}
 }
 
-func (s *Service) GetCurrentUser(token string) *dto.DTOErrorWithCode {
-	res, err := s.client.R().SetHeader("Authorization", fmt.Sprintf("Bearer %v", token)).EnableTrace().Get("/users/verify")
+func (s *Service) GetCurrentUser(token string) (*dto.FetchUserResponse, *dto.DTOErrorWithCode) {
+	bearerHeader := fmt.Sprintf("Bearer %v", token)
+	user := dto.FetchUserResponse{}
+
+	res, err := s.client.R().SetResult(&user).SetHeader("Authorization", bearerHeader).EnableTrace().Get("/users/verify")
 
 	if err != nil {
-		return &dto.DTOErrorWithCode{
+		return nil, &dto.DTOErrorWithCode{
 			Code:    fiber.StatusInternalServerError,
 			Message: err.Error(),
 		}
 	}
 
 	if res.StatusCode() >= 400 {
-		return &dto.DTOErrorWithCode{
+		return nil, &dto.DTOErrorWithCode{
 			Code:    res.StatusCode(),
 			Message: res.String(),
 		}
 	}
 
-	return nil
+	return &user, nil
 }
 
 func (s *Service) CreateUser(req *dto.CreateUserRequest) *dto.DTOErrorWithCode {
