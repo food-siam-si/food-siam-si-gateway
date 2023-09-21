@@ -28,7 +28,7 @@ type FetchUserResponse struct {
 type CreateUserRequest struct {
 	Email    string   `json:"email" validate:"required,email"`
 	Username string   `json:"username" validate:"required"`
-	Password string   `json:"password" validate:"required"`
+	Password string   `json:"password" validate:"required,password"`
 	UserType UserType `json:"userType" validate:"required"`
 }
 

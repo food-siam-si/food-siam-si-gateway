@@ -34,6 +34,10 @@ func NewValidator() IValidator {
 		return r.MatchString(fl.Field().String())
 	})
 
+	v.RegisterValidation("password", func(fl validator.FieldLevel) bool {
+		return len(fl.Field().String()) >= 8
+	})
+
 	en_translations.RegisterDefaultTranslations(v, trans)
 
 	return &Validator{v, trans}
