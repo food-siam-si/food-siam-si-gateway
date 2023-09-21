@@ -1,9 +1,11 @@
 package dto
 
+import "github.com/food-siam-si/food-siam-si-gateway/src/proto"
+
 type UserToken struct {
-	Role     string `json:"role"`
-	UserId   string `json:"userId"`
-	Username string `json:"username"`
+	Id   uint32         `json:"id"`
+	Type proto.UserType `json:"type"`
+	Name string         `json:"username"`
 }
 
 type CreateUserRequest struct {

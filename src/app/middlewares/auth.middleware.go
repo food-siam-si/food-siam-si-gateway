@@ -3,6 +3,7 @@ package middlewares
 import (
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
+	"github.com/food-siam-si/food-siam-si-gateway/src/proto"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -43,17 +44,17 @@ func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Locals("user", dto.UserToken{
-		Role:     "user",
-		UserId:   token,
-		Username: token,
+		Type: proto.UserType_Owner,
+		Id:   1,
+		Name: token,
 	})
 	return ctx.Next()
 }
 
 func (m *AuthMiddleware) RestaurantGuard(ctx *fiber.Ctx) error {
-	role := ctx.Locals("role")
+	user := ctx.Locals("user").(dto.UserToken)
 
-	if role != "restaurant" {
+	if user.Type.String() != proto.UserType_Owner.String() {
 		ctx.Status(fiber.StatusForbidden)
 		ctx.JSON(dto.DTOError{
 			Message: "Forbidden",

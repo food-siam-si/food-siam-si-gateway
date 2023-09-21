@@ -34,6 +34,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	restaurantConn, err := grpc.Dial(config.RestaurantServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+	if err != nil {
+		log.Printf("Failed to connect restaurant service %v", err)
+		os.Exit(1)
+	}
+
 	// Hello service
 	helloPbClient := proto.NewHelloServiceClient(helloConn)
 
@@ -47,7 +54,10 @@ func main() {
 	userHandler := userHdr.NewHandler(userService, v)
 
 	// Restaurant service
-	restaurantService := restaurantSrv.NewService()
+	restaurantClient := proto.NewRestaurantServiceClient(restaurantConn)
+	restaurantTypeClient := proto.NewRestaurantTypeServiceClient(restaurantConn)
+
+	restaurantService := restaurantSrv.NewService(restaurantClient, restaurantTypeClient)
 	restaurantHdr := restaurantHdr.NewHandler(restaurantService, v)
 
 	authMiddleware := middlewares.NewAuthMiddleware(userService)
@@ -65,10 +75,10 @@ func main() {
 
 	// Route Restaurant Initialize
 	app.Restaurant.Post("/", restaurantHdr.CreateRestaurant)
-	app.Restaurant.Put("/:id", restaurantHdr.UpdateRestaurantInfo)
-	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)
+	app.Restaurant.Put("/:id", restaurantHdr.UpdateRestaurantInfo)
+	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)

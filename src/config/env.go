@@ -20,7 +20,7 @@ func LoadEnv() *AppConfig {
 	godotenv.Load(".env")
 
 	config.Port = os.Getenv("PORT")
-	config.RestaurantServiceUrl = os.Getenv("RESTAURNAT_SERVICE_URL")
+	config.RestaurantServiceUrl = os.Getenv("RESTAURANT_SERVICE_URL")
 	config.HelloServiceUrl = os.Getenv("HELLO_SERVICE_URL")
 	config.UserServiceUrl = os.Getenv("USER_SERVICE_URL")
 

@@ -1,18 +1,15 @@
 syntax = "proto3";
 
-package file;
 
-option go_package = "src/proto";
+option go_package = "./proto";
 
-service UserService {
-    rpc Login(UserInfo) returns (LoginSuccess) {}
+message User {
+  uint32 id = 1;
+  string name = 2;
+  UserType type = 3;
 }
 
-message UserInfo {
-    string user = 1;
-    string password = 2;
-}
-
-message LoginSuccess {
-    string token = 1;
+enum UserType {
+  Owner = 0;
+  Customer = 1;
 }
