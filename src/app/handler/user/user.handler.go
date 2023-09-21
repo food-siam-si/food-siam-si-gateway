@@ -108,7 +108,7 @@ func (h *Handler) Signin(ctx *fiber.Ctx) error {
 	cookie := new(fiber.Cookie)
 
 	cookie.Name = "token"
-	cookie.Value = token
+	cookie.Value = token.Token
 	cookie.HTTPOnly = true
 	cookie.Expires = time.Now().Add(24 * time.Hour)
 
