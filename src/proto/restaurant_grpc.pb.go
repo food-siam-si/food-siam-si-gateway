@@ -27,8 +27,9 @@ type RestaurantServiceClient interface {
 	VerifyIdentity(ctx context.Context, in *VerifyRestaurantIdentityRequest, opts ...grpc.CallOption) (*wrapperspb.BoolValue, error)
 	Create(ctx context.Context, in *CreateRestaurantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	FindById(ctx context.Context, in *wrapperspb.UInt32Value, opts ...grpc.CallOption) (*Restaurant, error)
-	Update(ctx context.Context, in *UpdateRestaurantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Random(ctx context.Context, in *RandomRestaurantRequest, opts ...grpc.CallOption) (*Restaurant, error)
+	UpdateCurrent(ctx context.Context, in *UpdateCurrentRestaurantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetCurrent(ctx context.Context, in *GetCurrentRestaurantRequest, opts ...grpc.CallOption) (*Restaurant, error)
 }
 
 type restaurantServiceClient struct {
@@ -66,18 +67,27 @@ func (c *restaurantServiceClient) FindById(ctx context.Context, in *wrapperspb.U
 	return out, nil
 }
 
-func (c *restaurantServiceClient) Update(ctx context.Context, in *UpdateRestaurantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/RestaurantService/Update", in, out, opts...)
+func (c *restaurantServiceClient) Random(ctx context.Context, in *RandomRestaurantRequest, opts ...grpc.CallOption) (*Restaurant, error) {
+	out := new(Restaurant)
+	err := c.cc.Invoke(ctx, "/RestaurantService/Random", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *restaurantServiceClient) Random(ctx context.Context, in *RandomRestaurantRequest, opts ...grpc.CallOption) (*Restaurant, error) {
+func (c *restaurantServiceClient) UpdateCurrent(ctx context.Context, in *UpdateCurrentRestaurantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/RestaurantService/UpdateCurrent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *restaurantServiceClient) GetCurrent(ctx context.Context, in *GetCurrentRestaurantRequest, opts ...grpc.CallOption) (*Restaurant, error) {
 	out := new(Restaurant)
-	err := c.cc.Invoke(ctx, "/RestaurantService/Random", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/RestaurantService/GetCurrent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +101,9 @@ type RestaurantServiceServer interface {
 	VerifyIdentity(context.Context, *VerifyRestaurantIdentityRequest) (*wrapperspb.BoolValue, error)
 	Create(context.Context, *CreateRestaurantRequest) (*emptypb.Empty, error)
 	FindById(context.Context, *wrapperspb.UInt32Value) (*Restaurant, error)
-	Update(context.Context, *UpdateRestaurantRequest) (*emptypb.Empty, error)
 	Random(context.Context, *RandomRestaurantRequest) (*Restaurant, error)
+	UpdateCurrent(context.Context, *UpdateCurrentRestaurantRequest) (*emptypb.Empty, error)
+	GetCurrent(context.Context, *GetCurrentRestaurantRequest) (*Restaurant, error)
 	mustEmbedUnimplementedRestaurantServiceServer()
 }
 
@@ -109,11 +120,14 @@ func (UnimplementedRestaurantServiceServer) Create(context.Context, *CreateResta
 func (UnimplementedRestaurantServiceServer) FindById(context.Context, *wrapperspb.UInt32Value) (*Restaurant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindById not implemented")
 }
-func (UnimplementedRestaurantServiceServer) Update(context.Context, *UpdateRestaurantRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
 func (UnimplementedRestaurantServiceServer) Random(context.Context, *RandomRestaurantRequest) (*Restaurant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Random not implemented")
+}
+func (UnimplementedRestaurantServiceServer) UpdateCurrent(context.Context, *UpdateCurrentRestaurantRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCurrent not implemented")
+}
+func (UnimplementedRestaurantServiceServer) GetCurrent(context.Context, *GetCurrentRestaurantRequest) (*Restaurant, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCurrent not implemented")
 }
 func (UnimplementedRestaurantServiceServer) mustEmbedUnimplementedRestaurantServiceServer() {}
 
@@ -182,24 +196,6 @@ func _RestaurantService_FindById_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RestaurantService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateRestaurantRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RestaurantServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/RestaurantService/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RestaurantServiceServer).Update(ctx, req.(*UpdateRestaurantRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RestaurantService_Random_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RandomRestaurantRequest)
 	if err := dec(in); err != nil {
@@ -214,6 +210,42 @@ func _RestaurantService_Random_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RestaurantServiceServer).Random(ctx, req.(*RandomRestaurantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RestaurantService_UpdateCurrent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCurrentRestaurantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RestaurantServiceServer).UpdateCurrent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/RestaurantService/UpdateCurrent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RestaurantServiceServer).UpdateCurrent(ctx, req.(*UpdateCurrentRestaurantRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RestaurantService_GetCurrent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCurrentRestaurantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RestaurantServiceServer).GetCurrent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/RestaurantService/GetCurrent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RestaurantServiceServer).GetCurrent(ctx, req.(*GetCurrentRestaurantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -238,12 +270,16 @@ var RestaurantService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RestaurantService_FindById_Handler,
 		},
 		{
-			MethodName: "Update",
-			Handler:    _RestaurantService_Update_Handler,
-		},
-		{
 			MethodName: "Random",
 			Handler:    _RestaurantService_Random_Handler,
+		},
+		{
+			MethodName: "UpdateCurrent",
+			Handler:    _RestaurantService_UpdateCurrent_Handler,
+		},
+		{
+			MethodName: "GetCurrent",
+			Handler:    _RestaurantService_GetCurrent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

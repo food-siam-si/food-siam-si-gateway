@@ -33,8 +33,9 @@ service RestaurantService {
   rpc VerifyIdentity (VerifyRestaurantIdentityRequest) returns (google.protobuf.BoolValue) {}
   rpc Create(CreateRestaurantRequest) returns (google.protobuf.Empty) {}
   rpc FindById (google.protobuf.UInt32Value) returns (Restaurant) {}
-  rpc Update (UpdateRestaurantRequest) returns (google.protobuf.Empty) {}
   rpc Random (RandomRestaurantRequest) returns (Restaurant) {}
+  rpc UpdateCurrent (UpdateCurrentRestaurantRequest) returns (google.protobuf.Empty) {}
+  rpc GetCurrent (GetCurrentRestaurantRequest) returns (Restaurant) {}
 }
 
 message VerifyRestaurantIdentityRequest {
@@ -54,18 +55,21 @@ message CreateRestaurantRequest {
   User user = 9;
 }
 
-message UpdateRestaurantRequest {
-  uint32 id = 1;
-  string name = 2;
-  string description = 3;
-  float locationLat = 4;
-  float locationLong = 5;
-  string phoneNumber = 6;
-  AveragePrice averagePrice = 7;
-  string imageUrl = 8;
-  bool isInService = 9;
-  repeated uint32 restaurantTypeIds = 10;
-  User user = 11;
+message UpdateCurrentRestaurantRequest {
+  string name = 1;
+  string description = 2;
+  float locationLat = 3;
+  float locationLong = 4;
+  string phoneNumber = 5;
+  AveragePrice averagePrice = 6;
+  string imageUrl = 7;
+  bool isInService = 8;
+  repeated uint32 restaurantTypeIds = 9;
+  User user = 10;
+}
+
+message GetCurrentRestaurantRequest {
+  User user = 1;
 }
 
 message RandomRestaurantRequest {

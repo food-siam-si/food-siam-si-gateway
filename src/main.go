@@ -75,9 +75,10 @@ func main() {
 
 	// Route Restaurant Initialize
 	app.Restaurant.Post("/", restaurantHdr.CreateRestaurant)
+	app.Restaurant.Put("/me", restaurantHdr.UpdateRestaurantInfo)
+	app.Restaurant.Get("/me", authMiddleware.RestaurantGuard, restaurantHdr.GetCurrentRestaurant)
 	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)
-	app.Restaurant.Put("/:id", restaurantHdr.UpdateRestaurantInfo)
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 
 	// Graceful shutdown

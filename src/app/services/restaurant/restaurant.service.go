@@ -21,7 +21,8 @@ type Service struct {
 type IService interface {
 	CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.UserToken) *dto.DTOErrorWithCode
 	ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorWithCode)
-	UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode
+	GetCurrentRestaurant(user *dto.UserToken) (*dto.Restaurant, *dto.DTOErrorWithCode)
+	UpdateRestaurantInfo(user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode
 	ViewRestaurantType() (*proto.GetRestaurantTypeResponse, *dto.DTOErrorWithCode)
 	RandomRestaurant() *dto.DTOErrorWithCode
 }
@@ -31,6 +32,63 @@ func NewService(resClient proto.RestaurantServiceClient, resTypeClient proto.Res
 		resClient:     resClient,
 		resTypeClient: resTypeClient,
 	}
+}
+
+func (s *Service) GetCurrentRestaurant(user *dto.UserToken) (*dto.Restaurant, *dto.DTOErrorWithCode) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, errRes := s.resClient.GetCurrent(ctx, &proto.GetCurrentRestaurantRequest{
+		User: &proto.User{
+			Id:   user.Id,
+			Name: user.Name,
+			Type: proto.UserType(proto.UserType_value[string(user.Type)]),
+		},
+	})
+
+	if errRes != nil {
+		st, ok := status.FromError(errRes)
+
+		if ok {
+			switch st.Code() {
+			case codes.InvalidArgument:
+				return nil, &dto.DTOErrorWithCode{
+					Code:    fiber.StatusBadRequest,
+					Message: st.Message(),
+				}
+			case codes.NotFound:
+				return nil, &dto.DTOErrorWithCode{
+					Code:    fiber.StatusNotFound,
+					Message: st.Message(),
+				}
+			default:
+				return nil, &dto.DTOErrorWithCode{
+					Code:    fiber.StatusInternalServerError,
+					Message: st.Message(),
+				}
+			}
+		}
+	}
+
+	restaurantType := make([]dto.RestaurantType, 0)
+
+	for _, v := range res.RestaurantType {
+		restaurantType = append(restaurantType, dto.RestaurantType{
+			Id:   v.Id,
+			Name: v.Name,
+		})
+	}
+
+	return &dto.Restaurant{
+		Name:           res.Name,
+		Description:    res.Description,
+		PhoneNumber:    res.PhoneNumber,
+		LocationLat:    res.LocationLat,
+		LocationLong:   res.LocationLong,
+		AveragePrice:   dto.AveragePrice(proto.AveragePrice_name[int32(res.AveragePrice)]),
+		ImageUrl:       res.ImageUrl,
+		RestaurantType: restaurantType,
+	}, nil
 }
 
 func (s *Service) CreateRestaurant(body *dto.CreateRestaurantRequest, user *dto.UserToken) *dto.DTOErrorWithCode {
@@ -133,12 +191,11 @@ func (s *Service) ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorW
 	}, nil
 }
 
-func (s *Service) UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode {
+func (s *Service) UpdateRestaurantInfo(user *dto.UserToken, body *dto.UpdateRestaurantRequest) *dto.DTOErrorWithCode {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	protoBody := proto.UpdateRestaurantRequest{
-		Id:                id,
+	protoBody := proto.UpdateCurrentRestaurantRequest{
 		Name:              body.Name,
 		Description:       body.Description,
 		LocationLat:       body.LocationLat,
@@ -155,7 +212,7 @@ func (s *Service) UpdateRestaurantInfo(id uint32, user *dto.UserToken, body *dto
 		},
 	}
 
-	_, err := s.resClient.Update(ctx, &protoBody)
+	_, err := s.resClient.UpdateCurrent(ctx, &protoBody)
 
 	if err != nil {
 		st, ok := status.FromError(err)

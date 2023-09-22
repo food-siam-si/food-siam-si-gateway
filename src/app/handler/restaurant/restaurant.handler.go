@@ -59,6 +59,24 @@ func (h *Handler) CreateRestaurant(ctx *fiber.Ctx) error {
 	return nil
 }
 
+func (h *Handler) GetCurrentRestaurant(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(dto.UserToken)
+
+	res, _err := h.service.GetCurrentRestaurant(&user)
+
+	if _err != nil {
+		ctx.Status(_err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: _err.Message,
+		})
+		return nil
+	}
+
+	ctx.Status(fiber.StatusOK)
+	ctx.JSON(res)
+	return nil
+}
+
 func (h *Handler) ViewRestaurantById(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
@@ -97,31 +115,11 @@ func (h *Handler) ViewRestaurantById(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) UpdateRestaurantInfo(ctx *fiber.Ctx) error {
-	id := ctx.Params("id")
 	user := ctx.Locals("user").(dto.UserToken)
-
-	if id == "" {
-		ctx.Status(fiber.StatusBadRequest)
-		ctx.JSON(dto.DTOError{
-			Message: "Missing id",
-		})
-		return nil
-	}
-
-	// Convert id to uint32
-	idUint, err := strconv.ParseUint(id, 10, 32)
-
-	if err != nil {
-		ctx.Status(fiber.StatusBadRequest)
-		ctx.JSON(dto.DTOError{
-			Message: "Invalid id",
-		})
-		return nil
-	}
 
 	body := dto.UpdateRestaurantRequest{}
 
-	err = ctx.BodyParser(&body)
+	err := ctx.BodyParser(&body)
 
 	if err != nil {
 		ctx.Status(fiber.StatusBadRequest)
@@ -140,7 +138,7 @@ func (h *Handler) UpdateRestaurantInfo(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	_err := h.service.UpdateRestaurantInfo(uint32(idUint), &user, &body)
+	_err := h.service.UpdateRestaurantInfo(&user, &body)
 
 	if _err != nil {
 		ctx.Status(_err.Code)
