@@ -7,11 +7,9 @@ import (
 	"os/signal"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/client"
-	helloHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/hello"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
-	helloSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/hello"
 	restaurantSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
 	userSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/validator"
@@ -27,12 +25,12 @@ func main() {
 	config := config.LoadEnv()
 	v := validator.NewValidator()
 
-	helloConn, err := grpc.Dial(config.HelloServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// helloConn, err := grpc.Dial(config.HelloServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	if err != nil {
-		log.Printf("Failed to connect hello service %v", err)
-		os.Exit(1)
-	}
+	// if err != nil {
+	// 	log.Printf("Failed to connect hello service %v", err)
+	// 	os.Exit(1)
+	// }
 
 	restaurantConn, err := grpc.Dial(config.RestaurantServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -42,10 +40,10 @@ func main() {
 	}
 
 	// Hello service
-	helloPbClient := proto.NewHelloServiceClient(helloConn)
+	// helloPbClient := proto.NewHelloServiceClient(helloConn)
 
-	helloService := helloSrv.NewService(helloPbClient)
-	helloHandler := helloHdr.NewHandler(helloService, v)
+	// helloService := helloSrv.NewService(helloPbClient)
+	// helloHandler := helloHdr.NewHandler(helloService, v)
 
 	// User service
 	userClient := client.NewUserClient(config)
@@ -65,7 +63,7 @@ func main() {
 	app := router.NewFiberRouter(authMiddleware)
 
 	// Route Hello Initialize
-	app.Hello.Get("/", helloHandler.HelloWorld)
+	// app.Hello.Get("/", helloHandler.HelloWorld)
 
 	// Route User Initialize
 	app.User.Get("/me", authMiddleware.AuthGuard, userHandler.GetCurrentUser)
@@ -90,7 +88,8 @@ func main() {
 		fmt.Println("Gracefully shutting down...")
 
 		app.Shutdown()
-		helloConn.Close()
+		restaurantConn.Close()
+		// helloConn.Close()
 
 		os.Exit(0)
 	}()
