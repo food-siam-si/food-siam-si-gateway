@@ -89,6 +89,29 @@ func (h *Handler) CreateReview(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) GetReview(ctx *fiber.Ctx) error {
-	ctx.Status(fiber.StatusNotImplemented)
+	restaurantId := ctx.Params("restaurantId")
+
+	restaurantIdInt, err := strconv.Atoi(restaurantId)
+
+	if err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid restaurant id",
+		})
+		return nil
+	}
+
+	res, _err := h.reviewSrv.GetReview(uint32(restaurantIdInt))
+
+	if _err != nil {
+		ctx.Status(_err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: _err.Message,
+		})
+	}
+
+	ctx.Status(fiber.StatusOK)
+	ctx.JSON(res)
+
 	return nil
 }

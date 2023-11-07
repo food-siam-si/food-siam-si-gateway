@@ -1,6 +1,9 @@
 package review
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/go-resty/resty/v2"
 )
@@ -11,7 +14,7 @@ type Service struct {
 
 type IService interface {
 	CreateReview(body *dto.CreateReviewRequest, user *dto.UserToken, restaurantId uint32) *dto.DTOErrorWithCode
-	GetReview(restaurantId uint32) *dto.DTOErrorWithCode
+	GetReview(restaurantId uint32) (*dto.RestaurantReviewResponse, *dto.DTOErrorWithCode)
 }
 
 func NewService(client *resty.Client) IService {
@@ -45,6 +48,25 @@ func (s *Service) CreateReview(body *dto.CreateReviewRequest, user *dto.UserToke
 	return nil
 }
 
-func (s *Service) GetReview(restaurantId uint32) *dto.DTOErrorWithCode {
-	return nil
+func (s *Service) GetReview(restaurantId uint32) (*dto.RestaurantReviewResponse, *dto.DTOErrorWithCode) {
+	reviews := dto.RestaurantReviewResponse{}
+	res, err := s.client.R().SetResult(&reviews).Get(fmt.Sprintf("/reviews/%v", restaurantId))
+
+	if err != nil {
+		log.Println(err)
+		return nil, &dto.DTOErrorWithCode{
+			Code:    500,
+			Message: "Internal server error",
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		log.Println(res.String())
+		return nil, &dto.DTOErrorWithCode{
+			Code:    res.StatusCode(),
+			Message: res.String(),
+		}
+	}
+
+	return &reviews, nil
 }
