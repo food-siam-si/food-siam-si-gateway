@@ -45,7 +45,7 @@ func main() {
 
 	authMiddleware := middlewares.NewAuthMiddleware(userService)
 
-	app := router.NewFiberRouter(authMiddleware)
+	app := router.NewAppRouter(authMiddleware)
 
 	// Route Hello Initialize
 	// app.Hello.Get("/", helloHandler.HelloWorld)
@@ -78,7 +78,6 @@ func main() {
 
 		app.Shutdown()
 		restaurantConn.Close()
-		// helloConn.Close()
 
 		os.Exit(0)
 	}()

@@ -7,10 +7,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func NewUserClient(config *config.AppConfig) *resty.Client {
+func NewReviewClient(config *config.AppConfig) *resty.Client {
 	client := resty.New()
 
-	client.SetBaseURL(config.UserServiceUrl)
+	client.SetBaseURL(config.ReviewServiceUrl)
 	client.SetTimeout(30 * time.Second)
 	client.EnableTrace()
 

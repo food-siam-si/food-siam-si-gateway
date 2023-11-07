@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-type FiberRouter struct {
+type AppRouter struct {
 	*fiber.App
 	Hello      fiber.Router
 	User       fiber.Router
@@ -15,7 +15,7 @@ type FiberRouter struct {
 	Review     fiber.Router
 }
 
-func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
+func NewAppRouter(authMiddleware middlewares.IAuthMiddleware) *AppRouter {
 	r := fiber.New(fiber.Config{
 		BodyLimit: 16 * 1024 * 1024,
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
@@ -44,5 +44,5 @@ func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
 	restaurant := r.Group("/restaurant", authMiddleware.AuthGuard)
 	review := r.Group("/review", authMiddleware.AuthGuard)
 
-	return &FiberRouter{r, hello, user, restaurant, review}
+	return &AppRouter{r, hello, user, restaurant, review}
 }
