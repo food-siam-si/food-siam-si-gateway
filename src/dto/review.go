@@ -9,5 +9,5 @@ type CreateReviewRequestService struct {
 	UserId       uint32 `json:"userId"`
 	RestaurantId uint32 `json:"restaurantId"`
 	Description  string `json:"description"`
-	Rating       uint32 `json:"rating"`
+	Rating       uint32 `json:"rate"`
 }

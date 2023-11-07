@@ -88,6 +88,7 @@ func (h *Handler) CreateReview(ctx *fiber.Ctx) error {
 	return nil
 }
 
-func (h *Handler) GetReview(ctx *fiber.Ctx) {
-
+func (h *Handler) GetReview(ctx *fiber.Ctx) error {
+	ctx.Status(fiber.StatusNotImplemented)
+	return nil
 }

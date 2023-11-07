@@ -8,9 +8,11 @@ import (
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/client"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
+	reviewHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/review"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
 	restaurantSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
+	reviewSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/review"
 	userSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/validator"
 	"github.com/food-siam-si/food-siam-si-gateway/src/config"
@@ -45,6 +47,11 @@ func main() {
 
 	authMiddleware := middlewares.NewAuthMiddleware(userService)
 
+	// Review Service
+	reviewClient := client.NewReviewClient(config)
+	reviewService := reviewSrv.NewService(reviewClient)
+	reviewHdr := reviewHdr.NewHandler(restaurantService, reviewService, v)
+
 	app := router.NewAppRouter(authMiddleware)
 
 	// Route Hello Initialize
@@ -65,8 +72,8 @@ func main() {
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 
 	// Route Review Initialize
-	app.Review.Get("/:restaurantId")
-	app.Review.Post("/:restaurantId")
+	app.Review.Get("/:restaurantId", reviewHdr.GetReview)
+	app.Review.Post("/:restaurantId", reviewHdr.CreateReview)
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)

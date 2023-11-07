@@ -11,7 +11,7 @@ type Service struct {
 
 type IService interface {
 	CreateReview(body *dto.CreateReviewRequest, user *dto.UserToken, restaurantId uint32) *dto.DTOErrorWithCode
-	GetReview() *dto.DTOErrorWithCode
+	GetReview(restaurantId uint32) *dto.DTOErrorWithCode
 }
 
 func NewService(client *resty.Client) IService {
@@ -45,6 +45,6 @@ func (s *Service) CreateReview(body *dto.CreateReviewRequest, user *dto.UserToke
 	return nil
 }
 
-func (s *Service) GetReview() *dto.DTOErrorWithCode {
+func (s *Service) GetReview(restaurantId uint32) *dto.DTOErrorWithCode {
 	return nil
 }
