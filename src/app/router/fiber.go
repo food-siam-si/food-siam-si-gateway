@@ -12,6 +12,7 @@ type FiberRouter struct {
 	Hello      fiber.Router
 	User       fiber.Router
 	Restaurant fiber.Router
+	Review     fiber.Router
 }
 
 func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
@@ -41,6 +42,7 @@ func NewFiberRouter(authMiddleware middlewares.IAuthMiddleware) *FiberRouter {
 	hello := r.Group("/hello")
 	user := r.Group("/user")
 	restaurant := r.Group("/restaurant", authMiddleware.AuthGuard)
+	review := r.Group("/review", authMiddleware.AuthGuard)
 
-	return &FiberRouter{r, hello, user, restaurant}
+	return &FiberRouter{r, hello, user, restaurant, review}
 }

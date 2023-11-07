@@ -17,33 +17,18 @@ import (
 	"github.com/food-siam-si/food-siam-si-gateway/src/proto"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/router"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
 	config := config.LoadEnv()
 	v := validator.NewValidator()
 
-	// helloConn, err := grpc.Dial(config.HelloServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	// if err != nil {
-	// 	log.Printf("Failed to connect hello service %v", err)
-	// 	os.Exit(1)
-	// }
-
-	restaurantConn, err := grpc.Dial(config.RestaurantServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	restaurantConn, err := client.NewRestaurantClient(config)
 
 	if err != nil {
 		log.Printf("Failed to connect restaurant service %v", err)
 		os.Exit(1)
 	}
-
-	// Hello service
-	// helloPbClient := proto.NewHelloServiceClient(helloConn)
-
-	// helloService := helloSrv.NewService(helloPbClient)
-	// helloHandler := helloHdr.NewHandler(helloService, v)
 
 	// User service
 	userClient := client.NewUserClient(config)
@@ -78,6 +63,10 @@ func main() {
 	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
+
+	// Route Review Initialize
+	app.Review.Get("/:restaurantId")
+	app.Review.Post("/:restaurantId")
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
