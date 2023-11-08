@@ -28,6 +28,16 @@ type GetMenuResponse struct {
 	Menu
 }
 
+type UpdateRecommendMenuRequestBody struct {
+	IsRecom bool `json:"is_recom"`
+}
+
+type UpdateRecommendMenuRequestBodyService struct {
+	IsRecom bool   `json:"is_recom"`
+	UserId  uint32 `json:"user_id"`
+	MenuId  uint32 `json:"menu_id"`
+}
+
 type GetMenusResponseService = []Menu
 
 type GetMenusResponse = []Menu

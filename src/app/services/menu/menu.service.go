@@ -18,7 +18,7 @@ type IService interface {
 	GetMenus(restaurantId uint32) (*dto.GetMenusResponseService, *dto.DTOErrorWithCode)
 	RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode)
 	GetRecommendMenu(restaurantId uint32) (*dto.GetRecommendMenuResponseService, *dto.DTOErrorWithCode)
-	UpdateRecommendMenu(restaurantId uint32, menuId uint32, newStatus bool) error
+	UpdateRecommendMenu(restaurantId uint32, menuId uint32, userId uint32, newStatus bool) *dto.DTOErrorWithCode
 }
 
 func NewService(client *resty.Client) IService {
@@ -128,6 +128,28 @@ func (s *Service) GetRecommendMenu(restaurantId uint32) (*dto.GetRecommendMenuRe
 	return &body, nil
 }
 
-func (s *Service) UpdateRecommendMenu(restaurantId uint32, menuId uint32, newStatus bool) error {
+func (s *Service) UpdateRecommendMenu(restaurantId uint32, menuId uint32, userId uint32, newStatus bool) *dto.DTOErrorWithCode {
+	body := dto.UpdateRecommendMenuRequestBodyService{
+		IsRecom: newStatus,
+		UserId:  userId,
+		MenuId:  menuId,
+	}
+
+	res, err := s.client.R().SetBody(&body).Put(fmt.Sprintf("/menus/%v/recommend", restaurantId))
+
+	if err != nil {
+		return &dto.DTOErrorWithCode{
+			Message: "Failed to update recommend menu",
+			Code:    500,
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		return &dto.DTOErrorWithCode{
+			Message: res.String(),
+			Code:    res.StatusCode(),
+		}
+	}
+
 	return nil
 }

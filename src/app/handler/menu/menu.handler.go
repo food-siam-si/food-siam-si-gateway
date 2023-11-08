@@ -149,5 +149,31 @@ func (h *Handler) GetRecommendMenu(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) UpdateRecommendMenu(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(*dto.UserToken)
+
+	restaurantId := ctx.Params("restaurantId")
+	menuId := ctx.Params("menuId")
+
+	restaurantIdUint, rerr := strconv.ParseInt(restaurantId, 10, 32)
+	menuIdUint, merr := strconv.ParseInt(menuId, 10, 32)
+
+	if rerr != nil || merr != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid restaurant id or menu id",
+		})
+		return nil
+	}
+
+	err := h.menuService.UpdateRecommendMenu(uint32(restaurantIdUint), uint32(menuIdUint), user.Id, true)
+
+	if err != nil {
+		log.Println(err)
+		ctx.Status(err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: err.Message,
+		})
+	}
+
 	return nil
 }
