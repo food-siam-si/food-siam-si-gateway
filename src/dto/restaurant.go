@@ -39,6 +39,7 @@ type RestaurantType struct {
 }
 
 type Restaurant struct {
+	Id             uint32
 	Name           string           `json:"name"`
 	Description    string           `json:"description"`
 	PhoneNumber    string           `json:"phoneNumber"`

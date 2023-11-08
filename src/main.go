@@ -8,42 +8,29 @@ import (
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/client"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
+	reviewHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/review"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
 	restaurantSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
+	reviewSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/review"
 	userSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/validator"
 	"github.com/food-siam-si/food-siam-si-gateway/src/config"
 	"github.com/food-siam-si/food-siam-si-gateway/src/proto"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/router"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
 	config := config.LoadEnv()
 	v := validator.NewValidator()
 
-	// helloConn, err := grpc.Dial(config.HelloServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	// if err != nil {
-	// 	log.Printf("Failed to connect hello service %v", err)
-	// 	os.Exit(1)
-	// }
-
-	restaurantConn, err := grpc.Dial(config.RestaurantServiceUrl, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	restaurantConn, err := client.NewRestaurantClient(config)
 
 	if err != nil {
 		log.Printf("Failed to connect restaurant service %v", err)
 		os.Exit(1)
 	}
-
-	// Hello service
-	// helloPbClient := proto.NewHelloServiceClient(helloConn)
-
-	// helloService := helloSrv.NewService(helloPbClient)
-	// helloHandler := helloHdr.NewHandler(helloService, v)
 
 	// User service
 	userClient := client.NewUserClient(config)
@@ -60,7 +47,12 @@ func main() {
 
 	authMiddleware := middlewares.NewAuthMiddleware(userService)
 
-	app := router.NewFiberRouter(authMiddleware)
+	// Review Service
+	reviewClient := client.NewReviewClient(config)
+	reviewService := reviewSrv.NewService(reviewClient)
+	reviewHdr := reviewHdr.NewHandler(restaurantService, reviewService, v)
+
+	app := router.NewAppRouter(authMiddleware)
 
 	// Route Hello Initialize
 	// app.Hello.Get("/", helloHandler.HelloWorld)
@@ -79,6 +71,10 @@ func main() {
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)
 	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
 
+	// Route Review Initialize
+	app.Review.Get("/:restaurantId", reviewHdr.GetReview)
+	app.Review.Post("/:restaurantId", reviewHdr.CreateReview)
+
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -89,7 +85,6 @@ func main() {
 
 		app.Shutdown()
 		restaurantConn.Close()
-		// helloConn.Close()
 
 		os.Exit(0)
 	}()

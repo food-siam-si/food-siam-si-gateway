@@ -29,7 +29,7 @@ func (h *Handler) CreateRestaurant(ctx *fiber.Ctx) error {
 	if err != nil {
 		ctx.Status(fiber.StatusBadRequest)
 		ctx.JSON(dto.DTOError{
-			Message: "Invalid request body" + err.Error(),
+			Message: "Invalid request body",
 		})
 		return nil
 	}

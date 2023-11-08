@@ -80,6 +80,7 @@ func (s *Service) GetCurrentRestaurant(user *dto.UserToken) (*dto.Restaurant, *d
 	}
 
 	return &dto.Restaurant{
+		Id:             res.Id,
 		Name:           res.Name,
 		Description:    res.Description,
 		PhoneNumber:    res.PhoneNumber,

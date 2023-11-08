@@ -11,6 +11,7 @@ type AppConfig struct {
 	RestaurantServiceUrl string
 	HelloServiceUrl      string
 	UserServiceUrl       string
+	ReviewServiceUrl     string
 }
 
 func LoadEnv() *AppConfig {
@@ -23,6 +24,7 @@ func LoadEnv() *AppConfig {
 	config.RestaurantServiceUrl = os.Getenv("RESTAURANT_SERVICE_URL")
 	config.HelloServiceUrl = os.Getenv("HELLO_SERVICE_URL")
 	config.UserServiceUrl = os.Getenv("USER_SERVICE_URL")
+	config.ReviewServiceUrl = os.Getenv("REVIEW_SERVICE_URL")
 
 	return config
 }
