@@ -23,10 +23,108 @@ func NewHandler(menuService menu.IService, v validator.IValidator) *Handler {
 }
 
 func (h *Handler) CreateMenu(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(*dto.UserToken)
+
+	restaurantId := ctx.Params("restaurantId")
+
+	restaurantIdUint, err := strconv.ParseInt(restaurantId, 10, 32)
+
+	if err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid restaurant id",
+		})
+		return nil
+	}
+
+	var req dto.CreateMenuRequestBody
+
+	if err := ctx.BodyParser(&req); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid request body",
+		})
+
+		return nil
+	}
+
+	if err := h.v.Validate(req); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOErrorArray{
+			Message: *err,
+		})
+
+		return nil
+	}
+
+	_err := h.menuService.CreateMenu(uint32(restaurantIdUint), &req, user.Id)
+
+	if _err != nil {
+		log.Println(_err)
+		ctx.Status(_err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: _err.Message,
+		})
+
+		return nil
+	}
+
+	ctx.Status(fiber.StatusCreated)
+
 	return nil
 }
 
 func (h *Handler) UpdateMenu(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(*dto.UserToken)
+
+	restaurantId := ctx.Params("restaurantId")
+	menuId := ctx.Params("menuId")
+
+	restaurantIdUint, rerr := strconv.ParseInt(restaurantId, 10, 32)
+	menuIdUint, merr := strconv.ParseInt(menuId, 10, 32)
+
+	if merr != nil || rerr != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid restaurant id",
+		})
+		return nil
+	}
+
+	var req dto.UpdateMenuRequestBody
+
+	if err := ctx.BodyParser(&req); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid request body",
+		})
+
+		return nil
+	}
+
+	if err := h.v.Validate(req); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOErrorArray{
+			Message: *err,
+		})
+
+		return nil
+	}
+
+	_err := h.menuService.UpdateMenu(uint32(menuIdUint), uint32(restaurantIdUint), &req, user.Id)
+
+	if _err != nil {
+		log.Println(_err)
+		ctx.Status(_err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: _err.Message,
+		})
+
+		return nil
+	}
+
+	ctx.Status(fiber.StatusOK)
+
 	return nil
 }
 
@@ -55,6 +153,7 @@ func (h *Handler) DeleteMenu(ctx *fiber.Ctx) error {
 		ctx.JSON(dto.DTOError{
 			Message: err.Message,
 		})
+		return nil
 	}
 
 	ctx.Status(fiber.StatusOK)
@@ -77,6 +176,7 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 	res, _err := h.menuService.RandomMenu(uint32(restaurantIdUint))
 
 	if _err != nil {
+		log.Println(_err)
 		ctx.Status(_err.Code)
 		ctx.JSON(dto.DTOError{
 			Message: _err.Message,

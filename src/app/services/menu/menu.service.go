@@ -12,8 +12,8 @@ type Service struct {
 }
 
 type IService interface {
-	CreateMenu() error
-	UpdateMenu() error
+	CreateMenu(restaurantId uint32, body *dto.CreateMenuRequestBody, userId uint32) *dto.DTOErrorWithCode
+	UpdateMenu(menuId uint32, restaurantId uint32, body *dto.UpdateMenuRequestBody, userId uint32) *dto.DTOErrorWithCode
 	DeleteMenu(restaurantId uint32, menuId uint32, userId uint32) *dto.DTOErrorWithCode
 	GetMenus(restaurantId uint32) (*dto.GetMenusResponseService, *dto.DTOErrorWithCode)
 	RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode)
@@ -27,11 +27,64 @@ func NewService(client *resty.Client) IService {
 	}
 }
 
-func (s *Service) CreateMenu() error {
+func (s *Service) CreateMenu(restaurantId uint32, body *dto.CreateMenuRequestBody, userId uint32) *dto.DTOErrorWithCode {
+	serviceBody := dto.CreateMenuRequestBodyService{
+		UserId:      userId,
+		Price:       body.Price,
+		Title:       body.Title,
+		Description: body.Description,
+		IsRecom:     body.IsRecom,
+		ImageUrl:    body.ImageUrl,
+		Addons:      body.Addons,
+	}
+
+	res, err := s.client.R().SetBody(&serviceBody).Post(fmt.Sprintf("/menus/%v", restaurantId))
+
+	if err != nil {
+		return &dto.DTOErrorWithCode{
+			Message: "Failed to create menu",
+			Code:    500,
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		return &dto.DTOErrorWithCode{
+			Message: res.String(),
+			Code:    res.StatusCode(),
+		}
+	}
+
 	return nil
 }
 
-func (s *Service) UpdateMenu() error {
+func (s *Service) UpdateMenu(menuId uint32, restaurantId uint32, body *dto.UpdateMenuRequestBody, userId uint32) *dto.DTOErrorWithCode {
+	serviceBody := dto.UpdateMenuRequestBodyService{
+		UserId:      userId,
+		Title:       body.Title,
+		Description: body.Description,
+		Price:       body.Price,
+		IsRecom:     body.IsRecom,
+		ImageUrl:    body.ImageUrl,
+		Addons:      body.Addons,
+		MenuId:      menuId,
+	}
+
+	res, err := s.client.R().SetBody(&serviceBody).Put(fmt.Sprintf("/menus/%v", restaurantId))
+
+	if err != nil {
+		return &dto.DTOErrorWithCode{
+			Message: "Failed to update menu",
+			Code:    500,
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		return &dto.DTOErrorWithCode{
+			Message: res.String(),
+			Code:    res.StatusCode(),
+		}
+	}
+
 	return nil
 }
 
