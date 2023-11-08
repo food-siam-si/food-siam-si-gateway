@@ -78,7 +78,7 @@ func main() {
 	// app.Restaurant.Get("/:restaurantId/menus")
 	// app.Restaurant.Post("/:restaurantId/menus", authMiddleware.RestaurantGuard)
 	// app.Restaurant.Put("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard)
-	// app.Restaurant.Delete("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard)
+	app.Restaurant.Delete("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard)
 	// app.Restaurant.Get("/:restaurantId/menus/random")
 	// app.Restaurant.Get("/:restaurantId/menus/recommend")
 	// app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend", authMiddleware.RestaurantGuard)
