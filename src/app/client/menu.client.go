@@ -10,7 +10,7 @@ import (
 func NewMenuClient(config *config.AppConfig) *resty.Client {
 	client := resty.New()
 
-	client.SetBaseURL(config.ReviewServiceUrl)
+	client.SetBaseURL(config.MenuServiceUrl)
 	client.SetTimeout(30 * time.Second)
 
 	client.EnableTrace()

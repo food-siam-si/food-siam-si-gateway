@@ -9,9 +9,9 @@ import (
 type AppConfig struct {
 	Port                 string
 	RestaurantServiceUrl string
-	HelloServiceUrl      string
 	UserServiceUrl       string
 	ReviewServiceUrl     string
+	MenuServiceUrl       string
 }
 
 func LoadEnv() *AppConfig {
@@ -22,9 +22,9 @@ func LoadEnv() *AppConfig {
 
 	config.Port = os.Getenv("PORT")
 	config.RestaurantServiceUrl = os.Getenv("RESTAURANT_SERVICE_URL")
-	config.HelloServiceUrl = os.Getenv("HELLO_SERVICE_URL")
 	config.UserServiceUrl = os.Getenv("USER_SERVICE_URL")
 	config.ReviewServiceUrl = os.Getenv("REVIEW_SERVICE_URL")
+	config.MenuServiceUrl = os.Getenv("MENU_SERVICE_URL")
 
 	return config
 }
