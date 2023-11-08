@@ -65,7 +65,7 @@ func (h *Handler) CreateReview(ctx *fiber.Ctx) error {
 
 	restaurant, _ := h.restaurantSrv.GetCurrentRestaurant(&user)
 
-	if restaurant != nil {
+	if restaurant != nil && restaurant.Id != uint32(restaurantIdInt) {
 		ctx.Status(fiber.StatusUnauthorized)
 		ctx.JSON(dto.DTOError{
 			Message: "You are not allowed to review restaurant",
