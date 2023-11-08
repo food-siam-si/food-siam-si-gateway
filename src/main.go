@@ -76,12 +76,12 @@ func main() {
 	// Route Menu Initialize
 
 	// app.Restaurant.Get("/:restaurantId/menus")
-	// app.Restaurant.Post("/:restaurantId/menus")
-	// app.Restaurant.Put("/:restaurantId/menus/:menuId")
-	// app.Restaurant.Delete("/:restaurantId/menus/:menuId")
+	// app.Restaurant.Post("/:restaurantId/menus", authMiddleware.RestaurantGuard)
+	// app.Restaurant.Put("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard)
+	// app.Restaurant.Delete("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard)
 	// app.Restaurant.Get("/:restaurantId/menus/random")
 	// app.Restaurant.Get("/:restaurantId/menus/recommend")
-	// app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend")
+	// app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend", authMiddleware.RestaurantGuard)
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
