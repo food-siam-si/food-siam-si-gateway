@@ -73,6 +73,15 @@ func main() {
 	// Route Review Initialize
 	app.Review.Get("/:restaurantId", reviewHdr.GetReview)
 	app.Review.Post("/:restaurantId", reviewHdr.CreateReview)
+	// Route Menu Initialize
+
+	// app.Restaurant.Get("/:restaurantId/menus")
+	// app.Restaurant.Post("/:restaurantId/menus")
+	// app.Restaurant.Put("/:restaurantId/menus/:menuId")
+	// app.Restaurant.Delete("/:restaurantId/menus/:menuId")
+	// app.Restaurant.Get("/:restaurantId/menus/random")
+	// app.Restaurant.Get("/:restaurantId/menus/recommend")
+	// app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend")
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
