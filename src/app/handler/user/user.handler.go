@@ -1,8 +1,6 @@
 package user
 
 import (
-	"time"
-
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/validator"
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
@@ -105,29 +103,8 @@ func (h *Handler) Signin(ctx *fiber.Ctx) error {
 		return nil
 	}
 
-	cookie := new(fiber.Cookie)
-
-	cookie.Name = "token"
-	cookie.Value = token.Token
-	cookie.HTTPOnly = true
-	cookie.Expires = time.Now().Add(24 * time.Hour)
-
-	ctx.Cookie(cookie)
-
 	ctx.Status(fiber.StatusOK)
-
-	return nil
-}
-
-func (h *Handler) SignOut(ctx *fiber.Ctx) error {
-	cookie := new(fiber.Cookie)
-
-	cookie.Name = "token"
-	cookie.HTTPOnly = true
-	cookie.Expires = time.Now().Add(-24 * time.Hour)
-
-	ctx.Cookie(cookie)
-	ctx.Status(fiber.StatusOK)
+	ctx.JSON(token)
 
 	return nil
 }

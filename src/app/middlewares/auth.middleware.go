@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"strings"
+
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +24,18 @@ func NewAuthMiddleware(service user.IService) *AuthMiddleware {
 }
 
 func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
-	token := ctx.Cookies("token")
+	headers := ctx.GetReqHeaders()
+	authorization, ok := headers["Authorization"]
+
+	if !ok || !strings.HasPrefix(authorization, "Bearer ") {
+		ctx.Status(fiber.StatusUnauthorized)
+		ctx.JSON(dto.DTOError{
+			Message: "Unauthorized",
+		})
+		return nil
+	}
+
+	token := authorization[7:]
 
 	if token == "" {
 		ctx.Status(fiber.StatusUnauthorized)
