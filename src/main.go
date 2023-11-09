@@ -60,7 +60,6 @@ func main() {
 	// Route User Initialize
 	app.User.Get("/me", authMiddleware.AuthGuard, userHandler.GetCurrentUser)
 	app.User.Post("/login", userHandler.Signin)
-	app.User.Delete("/logout", userHandler.SignOut)
 	app.User.Post("/register", userHandler.CreateUser)
 
 	// Route Restaurant Initialize
