@@ -2,7 +2,7 @@ package dto
 
 type MenuAddonsServiceData struct {
 	MenuId uint   `json:"menu_id"`
-	Addons string `json:"addon"`
+	Addons string `json:"addons"`
 }
 
 type MenuServiceData struct {
@@ -18,7 +18,7 @@ type MenuServiceData struct {
 
 type MenuAddons struct {
 	MenuId uint   `json:"menuId"`
-	Addons string `json:"addon"`
+	Addons string `json:"label"`
 }
 
 type Menu struct {
@@ -31,17 +31,17 @@ type Menu struct {
 	Addons      []MenuAddonsServiceData `json:"addons"`
 }
 
-type GetRecommendMenuResponseService = []MenuServiceData
+type GetRecommendMenuResponseService struct {
+	Menu []MenuServiceData `json:"menus"`
+}
 
 type GetRecommendMenuResponse = []Menu
 
 type GetMenuResponseService struct {
-	MenuServiceData
+	Menu MenuServiceData `json:"menus"`
 }
 
-type GetMenuResponse struct {
-	Menu
-}
+type GetMenuResponse = Menu
 
 type UpdateRecommendMenuRequestBody struct {
 	IsRecom bool `json:"isRecom"`
@@ -53,7 +53,9 @@ type UpdateRecommendMenuRequestBodyService struct {
 	MenuId  uint32 `json:"menu_id"`
 }
 
-type GetMenusResponseService = []Menu
+type GetMenusResponseService struct {
+	Menu []MenuServiceData `json:"menus"`
+}
 
 type GetMenusResponse = []Menu
 

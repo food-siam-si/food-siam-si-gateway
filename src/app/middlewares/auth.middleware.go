@@ -3,6 +3,8 @@ package middlewares
 import (
 	"strings"
 
+	"time"
+
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/gofiber/fiber/v2"
@@ -52,6 +54,14 @@ func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
 		ctx.JSON(dto.DTOError{
 			Message: err.Message,
 		})
+
+		cookie := new(fiber.Cookie)
+
+		cookie.Name = "token"
+		cookie.HTTPOnly = true
+		cookie.Expires = time.Now().Add(-24 * time.Hour)
+
+		ctx.Cookie(cookie)
 		return nil
 	}
 
@@ -67,6 +77,20 @@ func (m *AuthMiddleware) RestaurantGuard(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(dto.UserToken)
 
 	if user.Type != "Owner" {
+		ctx.Status(fiber.StatusForbidden)
+		ctx.JSON(dto.DTOError{
+			Message: "Forbidden",
+		})
+		return nil
+	}
+
+	return ctx.Next()
+}
+
+func (m *AuthMiddleware) CustomerGuard(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(dto.UserToken)
+
+	if user.Type != "Customer" {
 		ctx.Status(fiber.StatusForbidden)
 		ctx.JSON(dto.DTOError{
 			Message: "Forbidden",

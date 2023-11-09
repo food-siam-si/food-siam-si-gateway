@@ -23,7 +23,7 @@ func NewHandler(menuService menu.IService, v validator.IValidator) *Handler {
 }
 
 func (h *Handler) CreateMenu(ctx *fiber.Ctx) error {
-	user := ctx.Locals("user").(*dto.UserToken)
+	user := ctx.Locals("user").(dto.UserToken)
 
 	restaurantId := ctx.Params("restaurantId")
 
@@ -75,7 +75,7 @@ func (h *Handler) CreateMenu(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) UpdateMenu(ctx *fiber.Ctx) error {
-	user := ctx.Locals("user").(*dto.UserToken)
+	user := ctx.Locals("user").(dto.UserToken)
 
 	restaurantId := ctx.Params("restaurantId")
 	menuId := ctx.Params("menuId")
@@ -129,7 +129,7 @@ func (h *Handler) UpdateMenu(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) DeleteMenu(ctx *fiber.Ctx) error {
-	user := ctx.Locals("user").(*dto.UserToken)
+	user := ctx.Locals("user").(dto.UserToken)
 
 	restaurantId := ctx.Params("restaurantId")
 	menuId := ctx.Params("menuId")
@@ -184,8 +184,18 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 		return nil
 	}
 
+	result := dto.GetMenuResponse{
+		Id:          res.Menu.Id,
+		Title:       res.Menu.Title,
+		Description: res.Menu.Description,
+		Price:       res.Menu.Price,
+		ImageUrl:    res.Menu.ImageUrl,
+		IsRecom:     res.Menu.IsRecom,
+		Addons:      res.Menu.Addons,
+	}
+
 	ctx.Status(fiber.StatusOK)
-	ctx.JSON(res)
+	ctx.JSON(result)
 
 	return nil
 }
@@ -213,8 +223,22 @@ func (h *Handler) GetMenus(ctx *fiber.Ctx) error {
 		return nil
 	}
 
+	result := dto.GetMenusResponse{}
+
+	for _, menu := range res.Menu {
+		result = append(result, dto.Menu{
+			Id:          menu.Id,
+			Title:       menu.Title,
+			Description: menu.Description,
+			Price:       menu.Price,
+			ImageUrl:    menu.ImageUrl,
+			IsRecom:     menu.IsRecom,
+			Addons:      menu.Addons,
+		})
+	}
+
 	ctx.Status(fiber.StatusOK)
-	ctx.JSON(res)
+	ctx.JSON(result)
 
 	return nil
 }
@@ -242,14 +266,28 @@ func (h *Handler) GetRecommendMenu(ctx *fiber.Ctx) error {
 		return nil
 	}
 
+	result := dto.GetMenusResponse{}
+
+	for _, menu := range res.Menu {
+		result = append(result, dto.Menu{
+			Id:          menu.Id,
+			Title:       menu.Title,
+			Description: menu.Description,
+			Price:       menu.Price,
+			ImageUrl:    menu.ImageUrl,
+			IsRecom:     menu.IsRecom,
+			Addons:      menu.Addons,
+		})
+	}
+
 	ctx.Status(fiber.StatusOK)
-	ctx.JSON(res)
+	ctx.JSON(result)
 
 	return nil
 }
 
 func (h *Handler) UpdateRecommendMenu(ctx *fiber.Ctx) error {
-	user := ctx.Locals("user").(*dto.UserToken)
+	user := ctx.Locals("user").(dto.UserToken)
 
 	restaurantId := ctx.Params("restaurantId")
 	menuId := ctx.Params("menuId")
@@ -274,6 +312,8 @@ func (h *Handler) UpdateRecommendMenu(ctx *fiber.Ctx) error {
 			Message: err.Message,
 		})
 	}
+
+	ctx.Status(fiber.StatusOK)
 
 	return nil
 }

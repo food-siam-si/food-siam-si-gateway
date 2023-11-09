@@ -2,6 +2,7 @@ package menu
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/go-resty/resty/v2"
@@ -118,7 +119,7 @@ func (s *Service) DeleteMenu(restaurantId uint32, menuId uint32, userId uint32) 
 func (s *Service) RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode) {
 	var body dto.GetMenuResponseService
 
-	res, err := s.client.R().SetBody(&body).Get(fmt.Sprintf("/menus/%v/random", restaurantId))
+	res, err := s.client.R().SetResult(&body).Get(fmt.Sprintf("/menus/%v/random", restaurantId))
 
 	if err != nil {
 		return nil, &dto.DTOErrorWithCode{
@@ -138,13 +139,14 @@ func (s *Service) RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, 
 }
 
 func (s *Service) GetMenus(restaurantId uint32) (*dto.GetMenusResponseService, *dto.DTOErrorWithCode) {
-	var body dto.GetMenusResponseService
+	body := dto.GetMenusResponseService{}
 
-	res, err := s.client.R().SetBody(&body).Get(fmt.Sprintf("/menus/%v/random", restaurantId))
+	res, err := s.client.R().SetResult(&body).Get(fmt.Sprintf("/menus/%v", restaurantId))
 
 	if err != nil {
+		log.Println(err)
 		return nil, &dto.DTOErrorWithCode{
-			Message: "Failed to get random menu",
+			Message: "Failed to get menu",
 			Code:    500,
 		}
 	}
@@ -160,9 +162,9 @@ func (s *Service) GetMenus(restaurantId uint32) (*dto.GetMenusResponseService, *
 }
 
 func (s *Service) GetRecommendMenu(restaurantId uint32) (*dto.GetRecommendMenuResponseService, *dto.DTOErrorWithCode) {
-	var body dto.GetRecommendMenuResponseService
+	body := dto.GetRecommendMenuResponseService{}
 
-	res, err := s.client.R().SetBody(&body).Get(fmt.Sprintf("/menus/%v/recommend", restaurantId))
+	res, err := s.client.R().SetResult(&body).Get(fmt.Sprintf("/menus/%v/recommend", restaurantId))
 
 	if err != nil {
 		return nil, &dto.DTOErrorWithCode{

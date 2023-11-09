@@ -108,6 +108,7 @@ func (h *Handler) GetReview(ctx *fiber.Ctx) error {
 		ctx.JSON(dto.DTOError{
 			Message: _err.Message,
 		})
+		return nil
 	}
 
 	ctx.Status(fiber.StatusOK)
