@@ -1,0 +1,541 @@
+{
+	"info": {
+		"_postman_id": "0d703241-a8da-4e64-8083-0eeb7764baa5",
+		"name": "food-siam-si",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11789996"
+	},
+	"item": [
+		{
+			"name": "Get Current User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/user/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Current Restaurant",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"helloworld@google.com\",\r\n    \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/user/logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"Hello World\",\r\n    \"email\": \"helloworld2@google.com\",\r\n    \"password\": \"password\",\r\n    \"userType\": \"Customer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Restaurant",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Hello World\",\r\n    \"description\": \"Hello\",\r\n    \"phoneNumber\": \"0893006931\",\r\n    \"locationLat\": 13.5235132,\r\n    \"locationLong\": 100.12351231,\r\n    \"averagePrice\": \"LowerThanHundreds\",\r\n    \"imageUrl\": \"\",\r\n    \"restaurantTypeIds\": []\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/restaurant",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Restaurant Info",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"hello_Worldddd\",\r\n    \"description\": \"hello World 2\",\r\n    \"isInService\": true,\r\n    \"averagePrice\": 2,\r\n    \"restaurantTypeIds\": [] \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Restaurant By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Random Restaurant",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/random",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						"random"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Restaurant Type",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/type",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						"type"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Review",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/review/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"review",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Review",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"Hello World 1235\",\r\n    \"rating\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/review/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"review",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Menus in restaurant",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Menu in Restaurant",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Hello World\",\r\n    \"description\": \"ABCDEFG\",\r\n    \"price\": 500,\r\n    \"addons\": [\"Hello\", \"World\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "99"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update menu",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Hello World\",\r\n    \"description\": \"ABCDEFG\",\r\n    \"price\": 9563,\r\n    \"addons\": [\"Hello\", \"World\"],\r\n    \"isRecom\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus/:menuId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus",
+						":menuId"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						},
+						{
+							"key": "menuId",
+							"value": "99"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete menu",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus/:menuId",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus",
+						":menuId"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						},
+						{
+							"key": "menuId",
+							"value": "99"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Random Menus",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus/random",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus",
+						"random"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recommend Menu",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus/recommend",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus",
+						"recommend"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Recommend Menu",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"is_recom\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/restaurant/:restaurantId/menus/:menuId/recommend",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"restaurant",
+						":restaurantId",
+						"menus",
+						":menuId",
+						"recommend"
+					],
+					"variable": [
+						{
+							"key": "restaurantId",
+							"value": "2"
+						},
+						{
+							"key": "menuId",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "localhost:7654",
+			"type": "string"
+		}
+	]
+}
