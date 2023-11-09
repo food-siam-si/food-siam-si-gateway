@@ -24,9 +24,10 @@ func NewAuthMiddleware(service user.IService) *AuthMiddleware {
 }
 
 func (m *AuthMiddleware) AuthGuard(ctx *fiber.Ctx) error {
-	authorization := ctx.GetRespHeader("Authorization", "")
+	headers := ctx.GetReqHeaders()
+	authorization, ok := headers["Authorization"]
 
-	if authorization == "" || !strings.HasPrefix(authorization, "Bearer ") {
+	if !ok || !strings.HasPrefix(authorization, "Bearer ") {
 		ctx.Status(fiber.StatusUnauthorized)
 		ctx.JSON(dto.DTOError{
 			Message: "Unauthorized",
