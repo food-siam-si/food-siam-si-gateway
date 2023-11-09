@@ -1,6 +1,8 @@
 package router
 
 import (
+	"log"
+
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -19,6 +21,7 @@ func NewAppRouter(authMiddleware middlewares.IAuthMiddleware) *AppRouter {
 	r := fiber.New(fiber.Config{
 		BodyLimit: 16 * 1024 * 1024,
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			log.Println(err.Error())
 			code := fiber.StatusInternalServerError
 			message := "Internal Server Error"
 

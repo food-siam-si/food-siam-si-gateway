@@ -7,10 +7,12 @@ import (
 	"os/signal"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/client"
+	"github.com/food-siam-si/food-siam-si-gateway/src/app/handler/menu"
 	restaurantHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/restaurant"
 	reviewHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/review"
 	userHdr "github.com/food-siam-si/food-siam-si-gateway/src/app/handler/user"
 	"github.com/food-siam-si/food-siam-si-gateway/src/app/middlewares"
+	menuSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/menu"
 	restaurantSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/restaurant"
 	reviewSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/review"
 	userSrv "github.com/food-siam-si/food-siam-si-gateway/src/app/services/user"
@@ -46,11 +48,17 @@ func main() {
 	restaurantHdr := restaurantHdr.NewHandler(restaurantService, v)
 
 	authMiddleware := middlewares.NewAuthMiddleware(userService)
+	restaurantMiddleware := middlewares.NewRestaurantMiddleware(restaurantService)
 
 	// Review Service
 	reviewClient := client.NewReviewClient(config)
 	reviewService := reviewSrv.NewService(reviewClient)
 	reviewHdr := reviewHdr.NewHandler(restaurantService, reviewService, v)
+
+	// Menu Service
+	menuClient := client.NewMenuClient(config)
+	menuService := menuSrv.NewService(menuClient)
+	menuHdr := menu.NewHandler(menuService, v)
 
 	app := router.NewAppRouter(authMiddleware)
 
@@ -64,15 +72,24 @@ func main() {
 
 	// Route Restaurant Initialize
 	app.Restaurant.Post("/", restaurantHdr.CreateRestaurant)
-	app.Restaurant.Put("/me", restaurantHdr.UpdateRestaurantInfo)
+	app.Restaurant.Put("/me", authMiddleware.RestaurantGuard, restaurantHdr.UpdateRestaurantInfo)
 	app.Restaurant.Get("/me", authMiddleware.RestaurantGuard, restaurantHdr.GetCurrentRestaurant)
-	app.Restaurant.Get("/random", restaurantHdr.RandomRestaurant)
+	app.Restaurant.Get("/random", authMiddleware.CustomerGuard, restaurantHdr.RandomRestaurant)
 	app.Restaurant.Get("/type", restaurantHdr.ViewRestaurantType)
-	app.Restaurant.Get("/:id", restaurantHdr.ViewRestaurantById)
+	app.Restaurant.Get("/:id", authMiddleware.CustomerGuard, restaurantHdr.ViewRestaurantById)
 
 	// Route Review Initialize
-	app.Review.Get("/:restaurantId", reviewHdr.GetReview)
-	app.Review.Post("/:restaurantId", reviewHdr.CreateReview)
+	app.Review.Get("/:restaurantId", restaurantMiddleware.OwnerOrCustomerGuard, reviewHdr.GetReview)
+	app.Review.Post("/:restaurantId", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, reviewHdr.CreateReview)
+
+	// Route Menu Initialize
+	app.Restaurant.Get("/:restaurantId/menus", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.GetMenus)
+	app.Restaurant.Post("/:restaurantId/menus", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, menuHdr.CreateMenu)
+	app.Restaurant.Put("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, menuHdr.UpdateMenu)
+	app.Restaurant.Delete("/:restaurantId/menus/:menuId", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, menuHdr.DeleteMenu)
+	app.Restaurant.Get("/:restaurantId/menus/random", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.RandomMenu)
+	app.Restaurant.Get("/:restaurantId/menus/recommend", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.GetRecommendMenu)
+	app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, menuHdr.UpdateRecommendMenu)
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)
