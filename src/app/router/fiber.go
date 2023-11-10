@@ -41,7 +41,7 @@ func NewAppRouter(authMiddleware middlewares.IAuthMiddleware) *AppRouter {
 
 	r.Use(recover.New())
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
+		AllowOrigins: "http://localhost:5173,https://food-siam-si.miello.dev",
 		AllowHeaders: "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin,Authorization",
 		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
 	}))
