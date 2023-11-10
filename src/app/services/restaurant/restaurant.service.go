@@ -181,6 +181,7 @@ func (s *Service) ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorW
 	}
 
 	return &dto.Restaurant{
+		Id:             res.Id,
 		Name:           res.Name,
 		Description:    res.Description,
 		PhoneNumber:    res.PhoneNumber,
