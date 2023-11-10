@@ -186,6 +186,7 @@ func (s *Service) ViewRestaurantById(id uint32) (*dto.Restaurant, *dto.DTOErrorW
 		PhoneNumber:    res.PhoneNumber,
 		LocationLat:    res.LocationLat,
 		LocationLong:   res.LocationLong,
+		Rating:         res.AverageScore,
 		AveragePrice:   dto.AveragePrice(proto.AveragePrice_name[int32(res.AveragePrice)]),
 		ImageUrl:       res.ImageUrl,
 		RestaurantType: restaurantType,

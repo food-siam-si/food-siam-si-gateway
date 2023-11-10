@@ -19,6 +19,7 @@ message Restaurant {
   string imageUrl = 9;
   bool isInService = 10;
   repeated RestaurantType  restaurantType  = 11;
+  float averageScore = 12;
 }
 
 enum AveragePrice {

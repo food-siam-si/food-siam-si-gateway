@@ -39,13 +39,14 @@ type RestaurantType struct {
 }
 
 type Restaurant struct {
-	Id             uint32
+	Id             uint32           `json:"id"`
 	Name           string           `json:"name"`
 	Description    string           `json:"description"`
 	PhoneNumber    string           `json:"phoneNumber"`
 	LocationLat    float32          `json:"locationLat"`
 	LocationLong   float32          `json:"locationLong"`
 	AveragePrice   AveragePrice     `json:"averagePrice"`
+	Rating         float32          `json:"rating"`
 	ImageUrl       string           `json:"imageUrl"`
 	RestaurantType []RestaurantType `json:"restaurantType"`
 }
