@@ -88,25 +88,25 @@ type CreateMenuRequestBodyService struct {
 }
 
 type UpdateMenuRequestBody struct {
-	Title       string      `json:"title" validate:"required"`
-	Description string      `json:"description" validate:"required"`
-	Price       uint32      `json:"price" validate:"required"`
-	IsRecom     bool        `json:"isRecommended"`
-	ImageUrl    string      `json:"imageUrl" validate:"omitempty,url"`
-	Addons      []string    `json:"addons"`
-	Types       []MenuTypes `json:"types"`
+	Title       string   `json:"title" validate:"required"`
+	Description string   `json:"description" validate:"required"`
+	Price       uint32   `json:"price" validate:"required"`
+	IsRecom     bool     `json:"isRecommended"`
+	ImageUrl    string   `json:"imageUrl" validate:"omitempty,url"`
+	Addons      []string `json:"addons"`
+	Types       []uint32 `json:"typesId"`
 }
 
 type UpdateMenuRequestBodyService struct {
-	UserId      uint32      `json:"user_id"`
-	Title       string      `json:"title"`
-	Description string      `json:"description"`
-	Price       uint32      `json:"price"`
-	IsRecom     bool        `json:"is_recom"`
-	ImageUrl    string      `json:"image_url"`
-	Addons      []string    `json:"addons"`
-	MenuId      uint32      `json:"menu_id"`
-	Types       []MenuTypes `json:"types"`
+	UserId      uint32   `json:"user_id"`
+	Title       string   `json:"title"`
+	Description string   `json:"description"`
+	Price       uint32   `json:"price"`
+	IsRecom     bool     `json:"is_recom"`
+	ImageUrl    string   `json:"image_url"`
+	Addons      []string `json:"addons"`
+	MenuId      uint32   `json:"menu_id"`
+	Types       []uint32 `json:"typesId"`
 }
 
 type GetMenuTypeResponseService struct {
