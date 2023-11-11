@@ -1,6 +1,6 @@
 module github.com/food-siam-si/food-siam-si-gateway
 
-go 1.21.3
+go 1.21
 
 require (
 	github.com/go-playground/locales v0.14.1

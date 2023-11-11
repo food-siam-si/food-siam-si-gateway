@@ -174,6 +174,7 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 		ctx.JSON(dto.DTOError{
 			Message: "Invalid restaurant id",
 		})
+		return nil
 	}
 
 	if qerr != nil {
@@ -181,6 +182,7 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 		ctx.JSON(dto.DTOError{
 			Message: "Invalid query params",
 		})
+		return nil
 	}
 
 	res, _err := h.menuService.RandomMenu(uint32(restaurantIdUint), &types)
