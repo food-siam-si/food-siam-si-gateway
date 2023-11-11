@@ -15,6 +15,7 @@ type AppRouter struct {
 	User       fiber.Router
 	Restaurant fiber.Router
 	Review     fiber.Router
+	Menu       fiber.Router
 }
 
 func NewAppRouter(authMiddleware middlewares.IAuthMiddleware) *AppRouter {
@@ -49,7 +50,8 @@ func NewAppRouter(authMiddleware middlewares.IAuthMiddleware) *AppRouter {
 	hello := r.Group("/hello")
 	user := r.Group("/user")
 	restaurant := r.Group("/restaurant", authMiddleware.AuthGuard)
+	menu := r.Group("/menu", authMiddleware.AuthGuard)
 	review := r.Group("/review", authMiddleware.AuthGuard)
 
-	return &AppRouter{r, hello, user, restaurant, review}
+	return &AppRouter{r, hello, user, restaurant, review, menu}
 }
