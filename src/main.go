@@ -80,7 +80,7 @@ func main() {
 
 	// Route Review Initialize
 	app.Review.Get("/:restaurantId", restaurantMiddleware.OwnerOrCustomerGuard, reviewHdr.GetReview)
-	app.Review.Post("/:restaurantId", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, reviewHdr.CreateReview)
+	app.Review.Post("/:restaurantId", authMiddleware.CustomerGuard, reviewHdr.CreateReview)
 
 	// Route Menu Initialize
 	app.Restaurant.Get("/:restaurantId/menus", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.GetMenus)
