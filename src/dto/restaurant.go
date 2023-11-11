@@ -33,6 +33,13 @@ type UpdateRestaurantRequest struct {
 	IsInService       bool         `json:"isInService"`
 }
 
+type RandomRestaurantRequest struct {
+	RestaurantTypeIds []uint32 `json:"restaurantTypeIds" validate:"required"`
+	CurrentLat        float32  `json:"currentLat" validate:"latitude"`
+	CurrentLong       float32  `json:"currentLong" validate:"longitude"`
+	MaxDistanceKm     uint32   `json:"maxDistanceKm"`
+}
+
 type RestaurantType struct {
 	Id   uint32 `json:"id"`
 	Name string `json:"name"`

@@ -171,9 +171,39 @@ func (h *Handler) ViewRestaurantType(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) RandomRestaurant(ctx *fiber.Ctx) error {
-	ctx.Status(fiber.StatusNotImplemented)
-	ctx.JSON(dto.DTOError{
-		Message: "Not Implemented",
-	})
+
+	query := dto.RandomRestaurantRequest{}
+
+	err := ctx.QueryParser(&query)
+
+	if err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid request query",
+		})
+		return nil
+	}
+
+	if err := h.v.Validate(query); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOErrorArray{
+			Message: *err,
+		})
+
+		return nil
+	}
+
+	res, _err := h.service.RandomRestaurant(&query)
+
+	if _err != nil {
+		ctx.Status(_err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: _err.Message,
+		})
+		return nil
+	}
+
+	ctx.Status(fiber.StatusOK)
+	ctx.JSON(res)
 	return nil
 }

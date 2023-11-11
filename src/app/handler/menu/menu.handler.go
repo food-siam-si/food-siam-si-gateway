@@ -164,6 +164,9 @@ func (h *Handler) DeleteMenu(ctx *fiber.Ctx) error {
 func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 	restaurantId := ctx.Params("restaurantId")
 
+	types := dto.RandomMenuRequest{}
+	qerr := ctx.QueryParser(&types)
+
 	restaurantIdUint, err := strconv.ParseInt(restaurantId, 10, 32)
 
 	if err != nil {
@@ -173,7 +176,14 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 		})
 	}
 
-	res, _err := h.menuService.RandomMenu(uint32(restaurantIdUint))
+	if qerr != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid query params",
+		})
+	}
+
+	res, _err := h.menuService.RandomMenu(uint32(restaurantIdUint), &types)
 
 	if _err != nil {
 		log.Println(_err)
@@ -192,6 +202,7 @@ func (h *Handler) RandomMenu(ctx *fiber.Ctx) error {
 		ImageUrl:    res.Menu.ImageUrl,
 		IsRecom:     res.Menu.IsRecom,
 		Addons:      res.Menu.Addons,
+		Types:       res.Menu.Types,
 	}
 
 	ctx.Status(fiber.StatusOK)
@@ -234,6 +245,7 @@ func (h *Handler) GetMenus(ctx *fiber.Ctx) error {
 			ImageUrl:    menu.ImageUrl,
 			IsRecom:     menu.IsRecom,
 			Addons:      menu.Addons,
+			Types:       menu.Types,
 		})
 	}
 
@@ -277,6 +289,7 @@ func (h *Handler) GetRecommendMenu(ctx *fiber.Ctx) error {
 			ImageUrl:    menu.ImageUrl,
 			IsRecom:     menu.IsRecom,
 			Addons:      menu.Addons,
+			Types:       menu.Types,
 		})
 	}
 
@@ -314,6 +327,52 @@ func (h *Handler) UpdateRecommendMenu(ctx *fiber.Ctx) error {
 	}
 
 	ctx.Status(fiber.StatusOK)
+
+	return nil
+}
+
+func (h *Handler) ViewMenuType(ctx *fiber.Ctx) error {
+	res, err := h.menuService.ViewMenuType()
+
+	if err != nil {
+		ctx.Status(err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: err.Message,
+		})
+		return nil
+	}
+
+	ctx.Status(fiber.StatusOK)
+	ctx.JSON(res)
+
+	return nil
+}
+
+func (h *Handler) ViewMenuTypeByRestaurantId(ctx *fiber.Ctx) error {
+	restaurantId := ctx.Params("restaurantId")
+
+	restaurantIdUint, rerr := strconv.ParseInt(restaurantId, 10, 32)
+
+	if rerr != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		ctx.JSON(dto.DTOError{
+			Message: "Invalid restaurant id",
+		})
+		return nil
+	}
+
+	res, err := h.menuService.ViewMenuTypeByRestaurantId(uint32(restaurantIdUint))
+
+	if err != nil {
+		ctx.Status(err.Code)
+		ctx.JSON(dto.DTOError{
+			Message: err.Message,
+		})
+		return nil
+	}
+
+	ctx.Status(fiber.StatusOK)
+	ctx.JSON(res)
 
 	return nil
 }

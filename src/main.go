@@ -90,6 +90,8 @@ func main() {
 	app.Restaurant.Get("/:restaurantId/menus/random", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.RandomMenu)
 	app.Restaurant.Get("/:restaurantId/menus/recommend", restaurantMiddleware.OwnerOrCustomerGuard, menuHdr.GetRecommendMenu)
 	app.Restaurant.Put("/:restaurantId/menus/:menuId/recommend", authMiddleware.RestaurantGuard, restaurantMiddleware.OwnerGuard, menuHdr.UpdateRecommendMenu)
+	app.Restaurant.Get("/:restaurantId/menus/type", authMiddleware.AuthGuard, menuHdr.ViewMenuTypeByRestaurantId)
+	app.Menu.Get("/type", authMiddleware.AuthGuard, menuHdr.ViewMenuType)
 
 	// Graceful shutdown
 	c := make(chan os.Signal, 1)

@@ -3,6 +3,7 @@ package menu
 import (
 	"fmt"
 	"log"
+	"net/url"
 
 	"github.com/food-siam-si/food-siam-si-gateway/src/dto"
 	"github.com/go-resty/resty/v2"
@@ -17,9 +18,11 @@ type IService interface {
 	UpdateMenu(menuId uint32, restaurantId uint32, body *dto.UpdateMenuRequestBody, userId uint32) *dto.DTOErrorWithCode
 	DeleteMenu(restaurantId uint32, menuId uint32, userId uint32) *dto.DTOErrorWithCode
 	GetMenus(restaurantId uint32) (*dto.GetMenusResponseService, *dto.DTOErrorWithCode)
-	RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode)
+	RandomMenu(restaurantId uint32, query *dto.RandomMenuRequest) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode)
 	GetRecommendMenu(restaurantId uint32) (*dto.GetRecommendMenuResponseService, *dto.DTOErrorWithCode)
 	UpdateRecommendMenu(restaurantId uint32, menuId uint32, userId uint32, newStatus bool) *dto.DTOErrorWithCode
+	ViewMenuType() (*dto.GetMenuTypeResponseService, *dto.DTOErrorWithCode)
+	ViewMenuTypeByRestaurantId(restaurantId uint32) (*dto.GetMenuTypeResponseService, *dto.DTOErrorWithCode)
 }
 
 func NewService(client *resty.Client) IService {
@@ -37,6 +40,7 @@ func (s *Service) CreateMenu(restaurantId uint32, body *dto.CreateMenuRequestBod
 		IsRecom:     body.IsRecom,
 		ImageUrl:    body.ImageUrl,
 		Addons:      body.Addons,
+		Types:       body.Types,
 	}
 
 	res, err := s.client.R().SetBody(&serviceBody).Post(fmt.Sprintf("/menus/%v", restaurantId))
@@ -68,6 +72,7 @@ func (s *Service) UpdateMenu(menuId uint32, restaurantId uint32, body *dto.Updat
 		ImageUrl:    body.ImageUrl,
 		Addons:      body.Addons,
 		MenuId:      menuId,
+		Types:       body.Types,
 	}
 
 	res, err := s.client.R().SetBody(&serviceBody).Put(fmt.Sprintf("/menus/%v", restaurantId))
@@ -116,10 +121,16 @@ func (s *Service) DeleteMenu(restaurantId uint32, menuId uint32, userId uint32) 
 	return nil
 }
 
-func (s *Service) RandomMenu(restaurantId uint32) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode) {
+func (s *Service) RandomMenu(restaurantId uint32, query *dto.RandomMenuRequest) (*dto.GetMenuResponseService, *dto.DTOErrorWithCode) {
 	var body dto.GetMenuResponseService
 
-	res, err := s.client.R().SetResult(&body).Get(fmt.Sprintf("/menus/%v/random", restaurantId))
+	types := []string{}
+
+	for _, t := range query.Types {
+		types = append(types, fmt.Sprint(t))
+	}
+
+	res, err := s.client.R().SetQueryParamsFromValues(url.Values{"types": types}).SetResult(&body).Get(fmt.Sprintf("/menus/%v/random", restaurantId))
 
 	if err != nil {
 		return nil, &dto.DTOErrorWithCode{
@@ -207,4 +218,48 @@ func (s *Service) UpdateRecommendMenu(restaurantId uint32, menuId uint32, userId
 	}
 
 	return nil
+}
+
+func (s *Service) ViewMenuType() (*dto.GetMenuTypeResponseService, *dto.DTOErrorWithCode) {
+	body := dto.GetMenuTypeResponseService{}
+
+	res, err := s.client.R().SetResult(&body).Get("/menus/types")
+
+	if err != nil {
+		return nil, &dto.DTOErrorWithCode{
+			Message: "Failed to get menu type",
+			Code:    500,
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		return nil, &dto.DTOErrorWithCode{
+			Message: res.String(),
+			Code:    res.StatusCode(),
+		}
+	}
+
+	return &body, nil
+}
+
+func (s *Service) ViewMenuTypeByRestaurantId(restaurantId uint32) (*dto.GetMenuTypeResponseService, *dto.DTOErrorWithCode) {
+	body := dto.GetMenuTypeResponseService{}
+
+	res, err := s.client.R().SetResult(&body).Get(fmt.Sprintf("/menus/%v/types", restaurantId))
+
+	if err != nil {
+		return nil, &dto.DTOErrorWithCode{
+			Message: "Failed to get menu type",
+			Code:    500,
+		}
+	}
+
+	if res.StatusCode() >= 400 {
+		return nil, &dto.DTOErrorWithCode{
+			Message: res.String(),
+			Code:    res.StatusCode(),
+		}
+	}
+
+	return &body, nil
 }
